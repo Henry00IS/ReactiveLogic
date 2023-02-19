@@ -1,0 +1,24 @@
+{
+  "author": {
+    "name": "Henry de Jongh",
+    "url": "https://github.com/Henry00IS"
+  },
+  "description": "The Reactive Logic System for Unity.",
+  "displayName": "Reactive Logic",
+  "documentationUrl": "https://github.com/Henry00IS/",
+  "changelogUrl": "https://github.com/Henry00IS/",
+  "licensesUrl": "https://github.com/Henry00IS/",
+  "name": "de.alpacait.reactivelogic",
+  "keywords": [
+    "level design",
+    "world building",
+	"logic",
+	"trigger",
+	"counter"
+  ],
+  "unity": "2018.3",
+  "version": "1.0.1",
+  "dependencies": {
+    "com.unity.mathematics": "1.1.0"
+  }
+}
