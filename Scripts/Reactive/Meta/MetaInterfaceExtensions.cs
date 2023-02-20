@@ -33,25 +33,21 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>Gets all outputs as <see cref="GUIContent"/> for inspector dropdowns.</summary>
         /// <param name="interfaces">The extension this reference.</param>
         /// <returns>The list of <see cref="GUIContent"/> outputs.</returns>
-        public static List<GUIContent> GetOutputsAsGUIContents(this ICollection<MetaInterface> interfaces)
+        public static void GetOutputsAsGUIContents(this ICollection<MetaInterface> interfaces, List<GUIContent> results)
         {
-            var results = new List<GUIContent>(interfaces.Count);
             foreach (var iface in interfaces)
                 if (iface.type == MetaInterfaceType.Output)
                     results.Add(new GUIContent(iface.name, iface.description));
-            return results;
         }
 
         /// <summary>Gets all inputs as <see cref="GUIContent"/> for inspector dropdowns.</summary>
         /// <param name="interfaces">The extension this reference.</param>
         /// <returns>The list of <see cref="GUIContent"/> inputs.</returns>
-        public static List<GUIContent> GetInputsAsGUIContents(this ICollection<MetaInterface> interfaces)
+        public static void GetInputsAsGUIContents(this ICollection<MetaInterface> interfaces, List<GUIContent> results)
         {
-            var results = new List<GUIContent>(interfaces.Count);
             foreach (var iface in interfaces)
                 if (iface.type == MetaInterfaceType.Input)
                     results.Add(new GUIContent(iface.name, iface.description));
-            return results;
         }
     }
 }

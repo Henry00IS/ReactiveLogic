@@ -30,7 +30,7 @@ namespace AlpacaIT.ReactiveLogic
 
         public void OnReactiveInput(ReactiveInput input)
         {
-            switch (input.name)
+            switch (input.input)
             {
                 case "Message":
                     Debug.Log(input.parameter.GetString());

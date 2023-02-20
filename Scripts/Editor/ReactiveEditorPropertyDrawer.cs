@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -90,7 +91,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                         if (gui)
                         {
-                            sOutputName.stringValue = TextFieldInterfacePopup(pos1, reactive.reactiveMetadata.interfaces, sOutputName.stringValue);
+                            sOutputName.stringValue = TextFieldReactableOutputsPopup(pos1, reactive.reactiveMetadata.interfaces, sOutputName.stringValue);
 
                             if (GUI.Button(pos2, EditorGUIUtility.IconContent("d_TreeEditor.Trash", "Remove Output")))
                             {
@@ -115,7 +116,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                         if (gui)
                         {
-                            sOutputTargetInput.stringValue = PrefixTextField(pos1, new GUIContent("Target Input", "The name of the input that will be triggered."), sOutputTargetInput.stringValue);
+                            sOutputTargetInput.stringValue = TextFieldReactableInputsPopup(pos1, sOutputTarget.stringValue, sOutputTargetInput.stringValue);
 
                             if (GUI.Button(pos2, EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
                             {
@@ -132,7 +133,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         }
                         position.y += 20f; pos1.y += 20f; pos2.y += 20f;
 
-                        position.y += 5f;
+                        position.y += 10f;
                     }
 
                     position.y += 5f;
@@ -167,17 +168,59 @@ namespace AlpacaIT.ReactiveLogic.Editor
             }
         }
 
-        private string TextFieldInterfacePopup(Rect position, MetaInterface[] interfaces, string text)
+        private string TextFieldReactableOutputsPopup(Rect position, MetaInterface[] interfaces, string text)
         {
             GetHorizontalRects(position, out var pos1, out var pos2);
 
-            var outputs = interfaces.GetOutputsAsGUIContents();
-            outputs.Insert(0, new GUIContent("...", "Select the name of an output to insert it."));
+            var options = new List<GUIContent>(interfaces.Length + 1) { new GUIContent("...", "Select the name of an output to insert it.") };
+            interfaces.GetOutputsAsGUIContents(options);
+
+            // if the current text matches an input name we select that by default.
+            int defaultSelection = 0;
+            var optionsCount = options.Count;
+            for (int i = 0; i < optionsCount; i++)
+                if (options[i].text == text)
+                    defaultSelection = i;
 
             // allow the user to select the value.
-            var selected = EditorGUI.Popup(pos1, 0, outputs.ToArray()); position.y += 20f;
-            if (selected != 0)
-                text = outputs[selected].text;
+            var selected = EditorGUI.Popup(pos1, defaultSelection, options.ToArray()); position.y += 20f;
+            if (selected != 0 && selected != defaultSelection)
+                text = options[selected].text;
+
+            return EditorGUI.TextField(pos2, text);
+        }
+
+        /// <summary>
+        /// Caches the list of possible inputs for a target name. This gets reset whenever the
+        /// selection changes in Unity Editor.
+        /// </summary>
+        private Dictionary<string, List<GUIContent>> targetInputsCache = new Dictionary<string, List<GUIContent>>();
+
+        private string TextFieldReactableInputsPopup(Rect position, string target, string text)
+        {
+            GetHorizontalRects(position, out var pos1, out var pos2);
+
+            // look in the target reactives for input names.
+            if (!targetInputsCache.TryGetValue(target, out var options))
+            {
+                options = new List<GUIContent>() { new GUIContent("...", "Select the name of an input to insert it.") };
+                foreach (var reactive in ReactiveLogicManager.Instance.ForEachReactive(target))
+                    reactive.reactiveMetadata.interfaces.GetInputsAsGUIContents(options);
+
+                targetInputsCache.Add(target, options);
+            }
+
+            // if the current text matches an input name we select that by default.
+            int defaultSelection = 0;
+            var optionsCount = options.Count;
+            for (int i = 0; i < optionsCount; i++)
+                if (options[i].text == text)
+                    defaultSelection = i;
+
+            // allow the user to select the value.
+            var selected = EditorGUI.Popup(pos1, defaultSelection, options.ToArray()); position.y += 20f;
+            if (selected != 0 && selected != defaultSelection)
+                text = options[selected].text;
 
             return EditorGUI.TextField(pos2, text);
         }
