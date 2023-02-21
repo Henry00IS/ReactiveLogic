@@ -90,11 +90,12 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="caller">The reactive logic component that is triggering this input.</param>
         /// <param name="target">The name of the target object that receives this input.</param>
         /// <param name="name">The name of the input.</param>
+        /// <param name="delay">The delay in seconds to wait before the input gets triggered.</param>
         /// <param name="parameter">The parameter to be passed to the input.</param>
-        public void FireOutput(IReactive activator, IReactive caller, string target, string name, object parameter)
+        public void FireOutput(IReactive activator, IReactive caller, string target, string name, float delay, object parameter)
         {
             foreach (var reactive in ForEachReactive(target))
-                chains.Add(new Chain(activator, caller, reactive, name, new ChainParameter(parameter)));
+                chains.Add(new Chain(activator, caller, reactive, name, delay, new ChainParameter(parameter)));
         }
 
         /// <summary>All of the logic gets executed once per fixed update.</summary>
@@ -103,11 +104,18 @@ namespace AlpacaIT.ReactiveLogic
             // find all of the reactive components in the scene.
             FindReactives();
 
+            // update all of the active chains.
             for (int i = chains.Count; i-- > 0;)
             {
                 var chain = chains[i];
-                chain.target?.OnReactiveInput(chain.ToReactiveInput());
-                chains.RemoveAt(i);
+
+                // decrease the delay time remaining by delta time.
+                chain.delay -= Time.fixedDeltaTime;
+                if (chain.delay <= 0.0f)
+                {
+                    chain.target?.OnReactiveInput(chain.ToReactiveInput());
+                    chains.RemoveAt(i);
+                }
             }
         }
     }

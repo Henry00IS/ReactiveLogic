@@ -3,12 +3,13 @@
     /// <summary>Represents an input output chain for reactive logic components.</summary>
     public class Chain
     {
-        public Chain(IReactive activator, IReactive caller, IReactive target, string input, ChainParameter parameter)
+        public Chain(IReactive activator, IReactive caller, IReactive target, string input, float delay, ChainParameter parameter)
         {
             this.activator = activator;
             this.caller = caller;
             this.target = target;
             this.input = input;
+            this.delay = delay;
             this.parameter = parameter;
         }
 
@@ -23,6 +24,9 @@
 
         /// <summary>The name of the input that got triggered.</summary>
         public string input { get; }
+
+        /// <summary>The delay in seconds remaining before the input gets triggered.</summary>
+        public float delay { get; set; }
 
         /// <summary>The parameter that was passed from an output to this input.</summary>
         public ChainParameter parameter { get; }

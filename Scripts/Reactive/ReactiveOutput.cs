@@ -11,7 +11,10 @@
         public string target;
 
         /// <summary>The name of the input that will be triggered.</summary>
-        public string targetInput;
+        public string input;
+
+        /// <summary>The delay in seconds before the input gets triggered.</summary>
+        public float delay;
 
         /// <summary>The parameter that will be passed from this output to this input.</summary>
         public string parameter;

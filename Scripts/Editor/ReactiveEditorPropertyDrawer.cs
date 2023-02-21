@@ -76,8 +76,9 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         var sOutput = sOutputs.GetArrayElementAtIndex(i);
 
                         var sOutputName = sOutput.FindPropertyRelative(nameof(ReactiveOutput.name));
+                        var sOutputDelay = sOutput.FindPropertyRelative(nameof(ReactiveOutput.delay));
                         var sOutputTarget = sOutput.FindPropertyRelative(nameof(ReactiveOutput.target));
-                        var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInput));
+                        var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.input));
                         var sOutputParameter = sOutput.FindPropertyRelative(nameof(ReactiveOutput.parameter));
 
                         var pos1 = position;
@@ -91,7 +92,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                         if (gui)
                         {
-                            sOutputName.stringValue = TextFieldReactableOutputsPopup(pos1, reactive.reactiveMetadata.interfaces, sOutputName.stringValue);
+                            (sOutputName.stringValue, sOutputDelay.floatValue) = TextFieldReactableOutputsPopup(pos1, reactive.reactiveMetadata.interfaces, sOutputName.stringValue, sOutputDelay.floatValue);
 
                             if (GUI.Button(pos2, EditorGUIUtility.IconContent("d_TreeEditor.Trash", "Remove Output")))
                             {
@@ -168,7 +169,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
             }
         }
 
-        private string TextFieldReactableOutputsPopup(Rect position, MetaInterface[] interfaces, string text)
+        private (string, float) TextFieldReactableOutputsPopup(Rect position, MetaInterface[] interfaces, string text, float delay)
         {
             GetHorizontalRects(position, out var pos1, out var pos2);
 
@@ -187,7 +188,11 @@ namespace AlpacaIT.ReactiveLogic.Editor
             if (selected != 0 && selected != defaultSelection)
                 text = options[selected].text;
 
-            return EditorGUI.TextField(pos2, text);
+            GetHorizontalInverseRects(pos2, out var pos3, out var pos4);
+
+            text = EditorGUI.TextField(pos3, text);
+            delay = EditorGUI.FloatField(pos4, delay);
+            return (text, delay);
         }
 
         /// <summary>
@@ -237,6 +242,16 @@ namespace AlpacaIT.ReactiveLogic.Editor
         {
             pos1 = position;
             pos1.width /= 3f;
+
+            pos2 = position;
+            pos2.width -= pos1.width;
+            pos2.x += pos1.width;
+        }
+
+        private void GetHorizontalInverseRects(Rect position, out Rect pos1, out Rect pos2)
+        {
+            pos1 = position;
+            pos1.width = pos1.width - (pos1.width / 3f);
 
             pos2 = position;
             pos2.width -= pos1.width;
