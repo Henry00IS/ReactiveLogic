@@ -141,12 +141,15 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                     if (gui)
                     {
-                        if (GUI.Button(position, EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
+                        var pos1 = position;
+                        pos1.x += 35f;
+                        pos1.width -= 70f;
+                        if (GUI.Button(pos1, EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
                         {
                             sOutputs.InsertArrayElementAtIndex(sOutputs.arraySize);
                         }
                     }
-                    position.y += 20f;
+                    position.y += 30f;
                 }
 
                 if (actionDelete)

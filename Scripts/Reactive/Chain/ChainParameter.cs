@@ -93,6 +93,9 @@ namespace AlpacaIT.ReactiveLogic
             return defaultValue;
         }
 
+        /// <summary>Gets whether the parameter is empty and does not have a value.</summary>
+        public bool isEmpty => string.IsNullOrEmpty(parameter);
+
         /// <summary>Converts the parameter to a <see cref="bool"/>.</summary>
         public static explicit operator bool(ChainParameter parameter) => parameter.GetBool();
 

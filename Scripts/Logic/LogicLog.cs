@@ -28,20 +28,24 @@ namespace AlpacaIT.ReactiveLogic
             new MetaInterface(MetaInterfaceType.Input, "Error", "Logs an error to the Unity Console.", "message", MetaParameterType.String, "The error message to be logged in the console.")
         );
 
+        /// <summary>The message to be logged to the Unity Console.</summary>
+        [Tooltip("The message to be logged to the Unity Console.")]
+        public string message;
+
         public void OnReactiveInput(ReactiveInput input)
         {
             switch (input.input)
             {
                 case "Message":
-                    Debug.Log(input.parameter.GetString());
+                    Debug.Log(input.parameter.GetString(message));
                     break;
 
                 case "Warning":
-                    Debug.LogWarning(input.parameter.GetString());
+                    Debug.LogWarning(input.parameter.GetString(message));
                     break;
 
                 case "Error":
-                    Debug.LogError(input.parameter.GetString());
+                    Debug.LogError(input.parameter.GetString(message));
                     break;
             }
         }
