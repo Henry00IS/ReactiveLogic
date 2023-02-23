@@ -2,7 +2,7 @@
 
 namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>Represents metadata for a reactive logic component input or output.</summary>
+    /// <summary>Represents metadata for an <see cref="IReactive"/> input or output.</summary>
     public class MetaInterface
     {
         /// <summary>The interface type which can either be an input or an output.</summary>

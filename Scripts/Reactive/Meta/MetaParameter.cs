@@ -1,9 +1,6 @@
-﻿using System;
-using UnityEngine;
-
-namespace AlpacaIT.ReactiveLogic
+﻿namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>Represents metadata for a reactive logic component parameter.</summary>
+    /// <summary>Represents metadata for an <see cref="IReactive"/> parameter.</summary>
     public class MetaParameter
     {
         /// <summary>The name of the parameter.</summary>

@@ -1,22 +1,30 @@
 ﻿namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>Represents an output from a reactive logic component.</summary>
+    /// <summary>
+    /// Represents a user-configured output handler of an <see cref="IReactive"/>. These outputs are
+    /// usually configured in Unity Editor by the level designer.
+    /// </summary>
     [System.Serializable]
     public class ReactiveOutput
     {
-        /// <summary>The name of the output that will cause this action.</summary>
+        /// <summary>
+        /// The output name of the <see cref="IReactive"/> that this output handler targets.
+        /// </summary>
         public string name;
 
-        /// <summary>The reactive logic component that will receive this input.</summary>
-        public string target;
+        /// <summary>
+        /// The target name that yields one or more <see cref="IReactive"/> that this handler
+        /// invokes an input on.
+        /// </summary>
+        public string targetName;
 
-        /// <summary>The name of the input that will be triggered.</summary>
-        public string input;
+        /// <summary>The target input name that will be invoked.</summary>
+        public string targetInput;
 
-        /// <summary>The delay in seconds before the input gets triggered.</summary>
+        /// <summary>The parameter that will be passed to the input of the target(s).</summary>
+        public string targetInputParameter;
+
+        /// <summary>The delay in seconds to wait before processing this output handler.</summary>
         public float delay;
-
-        /// <summary>The parameter that will be passed from this output to this input.</summary>
-        public string parameter;
     }
 }

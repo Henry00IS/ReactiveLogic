@@ -38,7 +38,7 @@ namespace AlpacaIT.ReactiveLogic
         private IReactive[] reactives;
 
         /// <summary>The list of active chains that are executing.</summary>
-        private List<Chain> chains = new List<Chain>();
+        private List<ReactiveChainLink> chains = new List<ReactiveChainLink>();
 
         /// <summary>Iterates over all components in the scene that implement <typeparamref name="T"/>.</summary>
         /// <typeparam name="T">The interface type that components should have implemented.</typeparam>
@@ -85,17 +85,20 @@ namespace AlpacaIT.ReactiveLogic
             }
         }
 
-        /// <summary>Fires an output triggering an input on a reactive logic component.</summary>
-        /// <param name="activator">The reactive logic component that caused the entire I/O chain.</param>
-        /// <param name="caller">The reactive logic component that is triggering this input.</param>
-        /// <param name="target">The name of the target object that receives this input.</param>
-        /// <param name="name">The name of the input.</param>
-        /// <param name="delay">The delay in seconds to wait before the input gets triggered.</param>
-        /// <param name="parameter">The parameter to be passed to the input.</param>
-        public void FireOutput(IReactive activator, IReactive caller, string target, string name, float delay, object parameter)
+        /// <summary>
+        /// Schedules invoking an input on one or more targets that match the specified target name.
+        /// This takes at least one fixed update step and may optionally be delayed further.
+        /// </summary>
+        /// <param name="activator">The game object that caused this chain of events.</param>
+        /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
+        /// <param name="target">The target name that yields one or more <see cref="IReactive"/> that will receive this input.</param>
+        /// <param name="input">The target input name that will be invoked.</param>
+        /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
+        /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
+        public void ScheduleInput(GameObject activator, IReactive caller, string target, string input, float delay, object parameter)
         {
             foreach (var reactive in ForEachReactive(target))
-                chains.Add(new Chain(activator, caller, reactive, name, delay, new ChainParameter(parameter)));
+                chains.Add(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 
         /// <summary>All of the logic gets executed once per fixed update.</summary>

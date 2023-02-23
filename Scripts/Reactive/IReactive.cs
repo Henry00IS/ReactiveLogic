@@ -7,19 +7,15 @@ namespace AlpacaIT.ReactiveLogic
     public interface IReactive
     {
         /// <summary>
-        /// The <see cref="Transform"/> attached to the <see cref="GameObject"/> of the reactive
-        /// logic component.
+        /// The <see cref="Transform"/> attached to the <see cref="GameObject"/> of the <see cref="IReactive"/>.
         /// </summary>
         public Transform transform { get; }
 
-        /// <summary>
-        /// The <see cref="GameObject"/> of the reactive logic component. Reactive logic is always
-        /// attached to a game object.
-        /// </summary>
+        /// <summary>The <see cref="GameObject"/> of the <see cref="IReactive"/>.</summary>
         public GameObject gameObject { get; }
 
         /// <summary>
-        /// Gets metadata for the reactive logic component. This contains a list of inputs, outputs,
+        /// Gets metadata for the <see cref="IReactive"/>. This contains a list of inputs, outputs,
         /// parameters and descriptions among other things. This is primarily used to support the
         /// game developer within Unity Editor and is not a requirement for function.
         /// <para>For full Unity Editor support it should always be implemented like this:</para>
@@ -38,12 +34,16 @@ namespace AlpacaIT.ReactiveLogic
         public ReactiveMetadata reactiveMetadata { get; }
 
         /// <summary>
-        /// Gets the list of configured outputs to be fired when they occur on this reactive logic component.
+        /// Gets a list of user-configured output handlers of the <see cref="IReactive"/>. These
+        /// outputs are usually configured in Unity Editor by the level designer.
         /// </summary>
         public List<ReactiveOutput> reactiveOutputs { get; }
 
-        /// <summary>Called when an input gets triggered on this reactive logic component.</summary>
-        /// <param name="input">The input that was triggered.</param>
+        /// <summary>
+        /// Called when an input gets invoked on this <see cref="IReactive"/>. This input may invoke
+        /// an output on this <see cref="IReactive"/> creating a chain of events.
+        /// </summary>
+        /// <param name="input">The input that was invoked on this <see cref="IReactive"/>.</param>
         void OnReactiveInput(ReactiveInput input);
     }
 }

@@ -1,6 +1,9 @@
 ﻿namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>Represents the different parameter types that can be passed between reactive logic component inputs and outputs.</summary>
+    /// <summary>
+    /// Represents the different parameter types that can be passed between <see cref="IReactive"/>
+    /// inputs and outputs.
+    /// </summary>
     public enum MetaParameterType
     {
         /// <summary>The parameter takes or outputs a boolean value.</summary>

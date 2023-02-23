@@ -26,9 +26,9 @@ namespace AlpacaIT.ReactiveLogic
 
         public void OnReactiveInput(ReactiveInput input)
         {
-            if (input.input == "Trigger")
+            if (input.name == "Trigger")
             {
-                this.OnReactiveOutput("Trigger");
+                this.OnReactiveOutput(input.activator, "Trigger");
             }
         }
     }

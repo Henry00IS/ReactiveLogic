@@ -1,12 +1,22 @@
-﻿namespace AlpacaIT.ReactiveLogic
+﻿using UnityEngine;
+
+namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>Provides extension methods for <see cref="IReactive"/>.</summary>
     public static class IReactiveExtensions
     {
-        /// <summary>Fires an output on this reactive logic component.</summary>
-        /// <param name="reactive">The reactive logic component that will trigger this input.</param>
-        /// <param name="name">The name of the output that is being triggered.</param>
-        public static void OnReactiveOutput(this IReactive reactive, string name)
+        /// <summary>
+        /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
+        /// specified output <paramref name="name"/>.
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
+        /// <param name="activator">
+        /// The game object that caused the current chain of events. This could for example be a
+        /// physics object that fell onto a button. It would be the physics object that
+        /// caused/activated it and not the button itself.
+        /// </param>
+        /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
+        public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name)
         {
             var outputs = reactive.reactiveOutputs;
             var outputsCount = outputs.Count;
@@ -15,15 +25,26 @@
                 var output = outputs[i];
 
                 if (output.name == name)
-                    ReactiveLogicManager.Instance.FireOutput(reactive, reactive, output.target, output.input, output.delay, output.parameter);
+                    ReactiveLogicManager.Instance.ScheduleInput(activator, reactive, output.targetName, output.targetInput, output.delay, output.targetInputParameter);
             }
         }
 
-        /// <summary>Fires an output on this reactive logic component.</summary>
-        /// <param name="reactive">The reactive logic component that will trigger this input.</param>
-        /// <param name="name">The name of the output that is being triggered.</param>
-        /// <param name="parameter">The parameter passed to the input when not overridden.</param>
-        public static void OnReactiveOutput(this IReactive reactive, string name, object parameter)
+        /// <summary>
+        /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
+        /// specified output <paramref name="name"/>.
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
+        /// <param name="activator">
+        /// The game object that caused the current chain of events. This could for example be a
+        /// physics object that fell onto a button. It would be the physics object that
+        /// caused/activated it and not the button itself.
+        /// </param>
+        /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
+        /// <param name="parameter">
+        /// The parameter to be passed to the next input. This may be overridden by the level
+        /// designer when they put a custom parameter into the output handler.
+        /// </param>
+        public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name, object parameter)
         {
             var outputs = reactive.reactiveOutputs;
             var outputsCount = outputs.Count;
@@ -31,13 +52,13 @@
             {
                 var output = outputs[i];
 
-                // only pass the parameter directly when not overriden by a value in the output.
+                // only pass the parameter directly when not overridden by a value in the output.
                 object outputParameter = parameter;
-                if (!string.IsNullOrEmpty(output.parameter))
-                    outputParameter = output.parameter;
+                if (!string.IsNullOrEmpty(output.targetInputParameter))
+                    outputParameter = output.targetInputParameter;
 
                 if (output.name == name)
-                    ReactiveLogicManager.Instance.FireOutput(reactive, reactive, output.target, output.input, output.delay, outputParameter);
+                    ReactiveLogicManager.Instance.ScheduleInput(activator, reactive, output.targetName, output.targetInput, output.delay, outputParameter);
             }
         }
     }

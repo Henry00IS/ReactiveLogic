@@ -26,7 +26,8 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>Start is called before the first frame update.</summary>
         private void Start()
         {
-            this.OnReactiveOutput("Start");
+            // logic auto begins a new chain of events and is the activator.
+            this.OnReactiveOutput(gameObject, "Start");
         }
 
         public void OnReactiveInput(ReactiveInput input)

@@ -77,9 +77,9 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                         var sOutputName = sOutput.FindPropertyRelative(nameof(ReactiveOutput.name));
                         var sOutputDelay = sOutput.FindPropertyRelative(nameof(ReactiveOutput.delay));
-                        var sOutputTarget = sOutput.FindPropertyRelative(nameof(ReactiveOutput.target));
-                        var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.input));
-                        var sOutputParameter = sOutput.FindPropertyRelative(nameof(ReactiveOutput.parameter));
+                        var sOutputTarget = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetName));
+                        var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInput));
+                        var sOutputParameter = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInputParameter));
 
                         var pos1 = position;
                         pos1.x += 20f;
