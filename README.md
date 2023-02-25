@@ -2,8 +2,6 @@
 
 Invisible entities that affect the game, such as triggers, math counters and more.
 
-THIS IS A BRAND NEW PROJECT. It doesn't work yet. DO NOT USE. Give it a star and come back soon! <3
-
 ## Installation Instructions:
 
 Add the following line to your Unity Package Manager:

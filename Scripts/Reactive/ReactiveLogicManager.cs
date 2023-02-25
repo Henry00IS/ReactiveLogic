@@ -78,7 +78,7 @@ namespace AlpacaIT.ReactiveLogic
                 var reactive = reactives[i];
 
                 // direct name comparison:
-                if (reactive.gameObject && reactive.gameObject.name == name)
+                if (reactive != null && reactive.gameObject && reactive.gameObject.name == name)
                 {
                     yield return reactive;
                 }
@@ -99,6 +99,21 @@ namespace AlpacaIT.ReactiveLogic
         {
             foreach (var reactive in ForEachReactive(target))
                 chains.Add(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveChainLinkParameter(parameter)));
+        }
+
+        /// <summary>
+        /// Schedules invoking an input on an <see cref="IReactive"/>. This takes at least one fixed
+        /// update step and may optionally be delayed further.
+        /// </summary>
+        /// <param name="activator">The game object that caused this chain of events.</param>
+        /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
+        /// <param name="target">The <see cref="IReactive"/> that will receive this input.</param>
+        /// <param name="input">The target input name that will be invoked.</param>
+        /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
+        /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
+        public void ScheduleInput(GameObject activator, IReactive caller, IReactive target, string input, float delay, object parameter)
+        {
+            chains.Add(new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 
         /// <summary>All of the logic gets executed once per fixed update.</summary>
