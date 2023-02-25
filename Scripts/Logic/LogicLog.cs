@@ -3,9 +3,7 @@ using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>
-    /// Represents a reactive logic component that provides the ability to log messages to the Unity console.
-    /// </summary>
+    /// <summary>An <see cref="IReactive"/> that can log messages to the Unity console.</summary>
     public class LogicLog : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation
@@ -28,8 +26,11 @@ namespace AlpacaIT.ReactiveLogic
             new MetaInterface(MetaInterfaceType.Input, "Error", "Logs an error to the Unity Console.", "message", MetaParameterType.String, "The error message to be logged in the console.")
         );
 
-        /// <summary>The message to be logged to the Unity Console.</summary>
-        [Tooltip("The message to be logged to the Unity Console.")]
+        /// <summary>
+        /// The message to be logged to the Unity Console. This string is used when no message
+        /// parameter was passed.
+        /// </summary>
+        [Tooltip("The message to be logged to the Unity Console. This string is used when no message parameter was passed.")]
         public string message;
 
         public void OnReactiveInput(ReactiveInput input)

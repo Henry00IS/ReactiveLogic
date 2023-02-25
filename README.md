@@ -2,6 +2,8 @@
 
 Invisible entities that affect the game, such as triggers, math counters and more.
 
+![Showcasing Dynamic Lighting and Reactive Logic by switching some light sources](https://raw.githubusercontent.com/wiki/Henry00IS/ReactiveLogic/images/DynamicLightingAndReactiveLogic.gif)
+
 ## Installation Instructions:
 
 Add the following line to your Unity Package Manager:

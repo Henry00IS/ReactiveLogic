@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
 {
+    /// <summary>An <see cref="IReactive"/> that can invoke an input on scene start.</summary>
     public class LogicAuto : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation
