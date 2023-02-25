@@ -13,7 +13,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
         #region Workaround to get a halfway decent OnGUI method
 
         // we use static to keep the settings open or closed between different selections.
-        private static bool isFoldoutHeaderGroupActive = true; // SET THIS TO FALSE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        private static bool isFoldoutHeaderGroupActive = false;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
