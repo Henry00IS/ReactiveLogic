@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -72,16 +73,41 @@ namespace AlpacaIT.ReactiveLogic
             // make sure we can execute this before FixedUpdate.
             if (reactives == null) FindReactives();
 
+            var targetNameMatcher = CreateTargetNameMatcher(name);
+
             // iterate over all reactives in the scene.
             for (int i = 0; i < reactives.Length; i++)
             {
                 var reactive = reactives[i];
 
-                // direct name comparison:
-                if (reactive != null && reactive.gameObject && reactive.gameObject.name == name)
+                // match the given target name:
+                if (reactive != null && reactive.gameObject && targetNameMatcher(reactive.gameObject.name))
                 {
                     yield return reactive;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Creates a function that matches the given target name to any string.
+        /// <para>The character ? is a wildcard for one character.</para>
+        /// <para>The character * is a wildcard for zero or more characters.</para>
+        /// </summary>
+        /// <param name="name">The target name to be matched.</param>
+        /// <returns>The function that matches the given string to the target name.</returns>
+        public Func<string, bool> CreateTargetNameMatcher(string name)
+        {
+            if (name.Contains("?") || name.Contains("*"))
+            {
+                // wildcard regex name comparison:
+                var pattern = "^" + Regex.Escape(name).Replace("\\?", ".").Replace("\\*", ".*") + "$";
+                var regex = new Regex(pattern);
+                return input => regex.IsMatch(input);
+            }
+            else
+            {
+                // direct name comparison.
+                return input => input == name;
             }
         }
 

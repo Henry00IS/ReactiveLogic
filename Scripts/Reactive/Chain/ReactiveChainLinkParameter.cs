@@ -47,6 +47,13 @@ namespace AlpacaIT.ReactiveLogic
                 return;
             }
 
+            // chain link parameters are copied directly.
+            if (parameter is ReactiveChainLinkParameter reactiveChainLinkParameter)
+            {
+                this.parameter = reactiveChainLinkParameter.parameter;
+                return;
+            }
+
             throw new System.Exception("Unable to create a parameter of type '" + parameter.GetType().Name + "'!");
         }
 
