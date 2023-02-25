@@ -2,7 +2,11 @@
 
 Invisible entities that affect the game, such as triggers, math counters and more.
 
+It is inspired by Valve's Inputs and Outputs system of the Source Engine.
+
 ![Showcasing Dynamic Lighting and Reactive Logic by switching some light sources](https://raw.githubusercontent.com/wiki/Henry00IS/ReactiveLogic/images/DynamicLightingAndReactiveLogic.gif)
+
+Be sure to check the [Wiki Documentation](https://github.com/Henry00IS/ReactiveLogic/wiki) for more instructions.
 
 ## Installation Instructions:
 
