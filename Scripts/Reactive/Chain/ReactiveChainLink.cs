@@ -50,6 +50,13 @@ namespace AlpacaIT.ReactiveLogic
         public float delay { get; set; }
 
         /// <summary>
+        /// Gets whether the <see cref="targetInput"/> starts with "User" and should invoke an
+        /// output at the target <see cref="IReactive"/> with the same name, instead of calling the
+        /// <see cref="IReactive.OnReactiveInput"/> method.
+        /// </summary>
+        public bool targetInputIsUserDefined => targetInput.StartsWith("User");
+
+        /// <summary>
         /// Returns a new <see cref="ReactiveInput"/> that can be passed into the <see
         /// cref="IReactive.OnReactiveInput"/> of the target.
         /// </summary>

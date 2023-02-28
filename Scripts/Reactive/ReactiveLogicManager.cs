@@ -197,7 +197,12 @@ namespace AlpacaIT.ReactiveLogic
                 chain.delay -= Time.fixedDeltaTime;
                 if (chain.delay <= 0.0f)
                 {
-                    chain.target?.OnReactiveInput(chain.ToReactiveInput());
+                    // "User"-inputs invoke the output handlers at the target reactive.
+                    if (chain.targetInputIsUserDefined)
+                        chain.target?.OnReactiveOutput(chain.activator, chain.targetInput, chain.targetParameter);
+                    else
+                        chain.target?.OnReactiveInput(chain.ToReactiveInput());
+
                     chains.RemoveAt(i);
                 }
             }
