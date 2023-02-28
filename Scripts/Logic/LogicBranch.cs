@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
 {
+    /// <summary>An <see cref="IReactive"/> that can branch between two outputs.</summary>
     public class LogicBranch : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation
@@ -20,8 +21,8 @@ namespace AlpacaIT.ReactiveLogic
         #endregion Required IReactive Implementation
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(
-            new MetaInterface(MetaInterfaceType.Input, "SetValue", "Set the boolean value without performing the test.", "parameter", MetaParameterType.Boolean, "The boolean value to be stored for future tests."),
-            new MetaInterface(MetaInterfaceType.Input, "SetValueTest", "Set the boolean value and perform the test. This invokes either the True or False output accordingly.", "parameter", MetaParameterType.Boolean, "The boolean value to be stored and tested."),
+            new MetaInterface(MetaInterfaceType.Input, "SetValue", "Set the boolean value without performing the test.", "value", MetaParameterType.Boolean, "The boolean value to be stored for future tests."),
+            new MetaInterface(MetaInterfaceType.Input, "SetValueTest", "Set the boolean value and perform the test. This invokes either the True or False output accordingly.", "value", MetaParameterType.Boolean, "The boolean value to be stored and tested."),
             new MetaInterface(MetaInterfaceType.Input, "Toggle", "Toggle the boolean value between true and false without performing the test."),
             new MetaInterface(MetaInterfaceType.Input, "ToggleTest", "Toggle the boolean value between true and false and perform the test. This invokes either the True or False output accordingly."),
             new MetaInterface(MetaInterfaceType.Input, "Test", "Performs the test invoking either the True or False output accordingly."),

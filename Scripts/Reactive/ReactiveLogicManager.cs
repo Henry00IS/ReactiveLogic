@@ -65,14 +65,34 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>
         /// Iterates over all <see cref="IReactive"/> components in the scene matching the name.
         /// </summary>
+        /// <param name="caller">The <see cref="IReactive"/> that wants to look up the target name.</param>
         /// <param name="name">The target name to find.</param>
-        public IEnumerable<IReactive> ForEachReactive(string name)
+        public IEnumerable<IReactive> ForEachReactive(IReactive caller, string name)
         {
             if (string.IsNullOrEmpty(name)) yield break;
 
             // make sure we can execute this before FixedUpdate.
             if (reactives == null) FindReactives();
 
+            // check if the caller is part of a group.
+            var groupCaller = caller.gameObject.GetComponentInParent<LogicGroup>();
+
+            // if the caller is part of a group then search for the target inside:
+            if (groupCaller)
+            {
+                foreach (var reactive in ForEachReactiveInsideGroup(groupCaller, name))
+                    yield return reactive;
+            }
+            // if the caller is not part of a group then search for a global name:
+            else
+            {
+                foreach (var reactive in ForEachReactiveOutsideGroups(name))
+                    yield return reactive;
+            }
+        }
+
+        private IEnumerable<IReactive> ForEachReactiveOutsideGroups(string name)
+        {
             var targetNameMatcher = CreateTargetNameMatcher(name);
 
             // iterate over all reactives in the scene.
@@ -84,6 +104,26 @@ namespace AlpacaIT.ReactiveLogic
                 if (reactive != null && reactive.gameObject && targetNameMatcher(reactive.gameObject.name))
                 {
                     yield return reactive;
+                }
+            }
+        }
+
+        private IEnumerable<IReactive> ForEachReactiveInsideGroup(LogicGroup parentGroup, string name)
+        {
+            var targetNameMatcher = CreateTargetNameMatcher(name);
+
+            // iterate over all reactives in the scene.
+            for (int i = 0; i < reactives.Length; i++)
+            {
+                var reactive = reactives[i];
+
+                // match the given target name:
+                if (reactive != null && reactive.gameObject && targetNameMatcher(reactive.gameObject.name))
+                {
+                    // and the reactive must be in the same group.
+                    var group = reactive.gameObject.GetComponentInParent<LogicGroup>();
+                    if (group == parentGroup)
+                        yield return reactive;
                 }
             }
         }
@@ -123,7 +163,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
         public void ScheduleInput(GameObject activator, IReactive caller, string target, string input, float delay, object parameter)
         {
-            foreach (var reactive in ForEachReactive(target))
+            foreach (var reactive in ForEachReactive(caller, target))
                 chains.Add(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 

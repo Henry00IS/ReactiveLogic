@@ -117,7 +117,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                         if (gui)
                         {
-                            sOutputTargetInput.stringValue = TextFieldReactableInputsPopup(pos1, sOutputTarget.stringValue, sOutputTargetInput.stringValue);
+                            sOutputTargetInput.stringValue = TextFieldReactableInputsPopup(reactive, pos1, sOutputTarget.stringValue, sOutputTargetInput.stringValue);
 
                             if (GUI.Button(pos2, EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
                             {
@@ -204,7 +204,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
         /// </summary>
         private Dictionary<string, List<GUIContent>> targetInputsCache = new Dictionary<string, List<GUIContent>>();
 
-        private string TextFieldReactableInputsPopup(Rect position, string target, string text)
+        private string TextFieldReactableInputsPopup(IReactive caller, Rect position, string target, string text)
         {
             GetHorizontalRects(position, out var pos1, out var pos2);
 
@@ -212,7 +212,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
             if (!targetInputsCache.TryGetValue(target, out var options))
             {
                 options = new List<GUIContent>() { new GUIContent("...", "Select the name of an input to insert it.") };
-                foreach (var reactive in ReactiveLogicManager.Instance.ForEachReactive(target))
+                foreach (var reactive in ReactiveLogicManager.Instance.ForEachReactive(caller, target))
                     reactive.reactiveMetadata.interfaces.GetInputsAsGUIContents(options);
 
                 targetInputsCache.Add(target, options);
