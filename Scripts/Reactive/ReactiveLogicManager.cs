@@ -33,10 +33,8 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>Whether an instance of the reactive logic manager has been created.</summary>
         public static bool hasInstance => s_Instance;
 
-        /// <summary>
-        /// Collection of all reactive logic components in the scene. This is updated once per <see cref="FixedUpdate"/>.
-        /// </summary>
-        private IReactive[] reactives;
+        /// <summary>Collection of all reactive logic components in the scene.</summary>
+        private List<IReactive> reactives = new List<IReactive>();
 
         /// <summary>The list of active chains that are executing.</summary>
         private List<ReactiveChainLink> chains = new List<ReactiveChainLink>();
@@ -56,10 +54,11 @@ namespace AlpacaIT.ReactiveLogic
 
         /// <summary>
         /// Finds all of the reactive components in the scene and stores them in <see cref="reactives"/>.
+        /// <para>This should only be called by editor code.</para>
         /// </summary>
-        private void FindReactives()
+        internal void EditorUpdateReactives()
         {
-            reactives = FindObjectsOfTypeImplementing<IReactive>().ToArray();
+            reactives = FindObjectsOfTypeImplementing<IReactive>().ToList();
         }
 
         /// <summary>
@@ -70,9 +69,6 @@ namespace AlpacaIT.ReactiveLogic
         public IEnumerable<IReactive> ForEachReactive(IReactive caller, string name)
         {
             if (string.IsNullOrEmpty(name)) yield break;
-
-            // make sure we can execute this before FixedUpdate.
-            if (reactives == null) FindReactives();
 
             // check if the caller is part of a group.
             var groupCaller = caller.gameObject.GetComponentInParent<LogicGroup>();
@@ -96,7 +92,8 @@ namespace AlpacaIT.ReactiveLogic
             var targetNameMatcher = CreateTargetNameMatcher(name);
 
             // iterate over all reactives in the scene.
-            for (int i = 0; i < reactives.Length; i++)
+            var reactivesCount = reactives.Count;
+            for (int i = 0; i < reactivesCount; i++)
             {
                 var reactive = reactives[i];
 
@@ -113,7 +110,8 @@ namespace AlpacaIT.ReactiveLogic
             var targetNameMatcher = CreateTargetNameMatcher(name);
 
             // iterate over all reactives in the scene.
-            for (int i = 0; i < reactives.Length; i++)
+            var reactivesCount = reactives.Count;
+            for (int i = 0; i < reactivesCount; i++)
             {
                 var reactive = reactives[i];
 
@@ -135,7 +133,7 @@ namespace AlpacaIT.ReactiveLogic
         /// </summary>
         /// <param name="name">The target name to be matched.</param>
         /// <returns>The function that matches the given string to the target name.</returns>
-        public Func<string, bool> CreateTargetNameMatcher(string name)
+        public static Func<string, bool> CreateTargetNameMatcher(string name)
         {
             if (name.Contains("?") || name.Contains("*"))
             {
@@ -182,12 +180,49 @@ namespace AlpacaIT.ReactiveLogic
             chains.Add(new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 
+        /// <summary>
+        /// Called when an <see cref="IReactive"/> gets enabled in the scene.
+        /// <para>
+        /// Do not call this method directly, please rely on <see
+        /// cref="IReactiveExtensions.OnReactiveEnable"/>. You can access it inside of your <see
+        /// cref="MonoBehaviour"/> using:
+        /// </para>
+        /// <code>
+        ///void OnEnable()
+        ///{
+        ///     this.OnReactiveEnable();
+        ///}
+        /// </code>
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> that got enabled.</param>
+        public void OnReactiveEnable(IReactive reactive)
+        {
+            reactives.Add(reactive);
+        }
+
+        /// <summary>
+        /// Called when an <see cref="IReactive"/> gets disabled in the scene.
+        /// <para>
+        /// Do not call this method directly, please rely on <see
+        /// cref="IReactiveExtensions.OnReactiveDisable"/>. You can access it inside of your <see
+        /// cref="MonoBehaviour"/> using:
+        /// </para>
+        /// <code>
+        ///void OnDisable()
+        ///{
+        ///     this.OnReactiveDisable();
+        ///}
+        /// </code>
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> that got disabled.</param>
+        public void OnReactiveDisable(IReactive reactive)
+        {
+            reactives.Remove(reactive);
+        }
+
         /// <summary>All of the logic gets executed once per fixed update.</summary>
         private void FixedUpdate()
         {
-            // find all of the reactive components in the scene.
-            FindReactives();
-
             // update all of the active chains.
             for (int i = chains.Count; i-- > 0;)
             {

@@ -21,6 +21,16 @@ namespace AlpacaIT.ReactiveLogic
 
         public ReactiveMetadata reactiveMetadata => _reactiveMeta;
 
+        private void OnEnable()
+        {
+            this.OnReactiveEnable();
+        }
+
+        private void OnDisable()
+        {
+            this.OnReactiveDisable();
+        }
+
         #endregion Required IReactive Implementation
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata();

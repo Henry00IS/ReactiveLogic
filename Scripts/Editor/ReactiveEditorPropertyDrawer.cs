@@ -44,6 +44,19 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
         #endregion Workaround to get a halfway decent OnGUI method
 
+        /// <summary>This flag gets reset whenever the editor selection changes.</summary>
+        private bool isNewInstance = true;
+
+        /// <summary>Handles setup after the editor selection changes.</summary>
+        private void OnSetup()
+        {
+            if (!isNewInstance) return;
+            isNewInstance = false;
+
+            // make sure we have an up to date collection of all reactives in the scene.
+            ReactiveLogicManager.Instance.EditorUpdateReactives();
+        }
+
         /// <summary>
         /// Called whenever the property gets drawn or the height of the property inspector is to be calculated.
         /// </summary>
@@ -53,6 +66,9 @@ namespace AlpacaIT.ReactiveLogic.Editor
         /// <param name="position">The current position (the height is 20 by default).</param>
         private void OnActualGUI(IReactive reactive, SerializedObject serializedObject, bool gui, ref Rect position)
         {
+            // handle first-time setup after editor selection changes.
+            OnSetup();
+
             try
             {
                 if (gui) EditorGUI.indentLevel++;

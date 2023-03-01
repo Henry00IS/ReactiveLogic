@@ -21,6 +21,16 @@ namespace AlpacaIT.ReactiveLogic
 
         public ReactiveMetadata reactiveMetadata => _reactiveMeta;
 
+        private void OnEnable()
+        {
+            this.OnReactiveEnable();
+        }
+
+        private void OnDisable()
+        {
+            this.OnReactiveDisable();
+        }
+
         #endregion Required IReactive Implementation
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(
@@ -37,7 +47,7 @@ namespace AlpacaIT.ReactiveLogic
         {
             if (input.name == "Filter")
             {
-                var targetNameMatcher = ReactiveLogicManager.Instance.CreateTargetNameMatcher(matchActivatorName);
+                var targetNameMatcher = ReactiveLogicManager.CreateTargetNameMatcher(matchActivatorName);
                 if (targetNameMatcher(input.activator.name))
                 {
                     OnFilterPassed(input);

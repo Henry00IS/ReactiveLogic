@@ -61,5 +61,42 @@ namespace AlpacaIT.ReactiveLogic
                     ReactiveLogicManager.Instance.ScheduleInput(activator, reactive, output.targetName, output.targetInput, output.delay, outputParameter);
             }
         }
+
+        /// <summary>
+        /// This function must be called when the behaviour becomes enabled and active.
+        /// <para>
+        /// Every <see cref="IReactive"/> must call <see
+        /// cref="IReactiveExtensions.OnReactiveEnable"/> here:
+        /// </para>
+        /// <code>
+        ///void OnEnable()
+        ///{
+        ///     this.OnReactiveEnable();
+        ///}
+        /// </code>
+        /// </summary>
+        public static void OnReactiveEnable(this IReactive reactive)
+        {
+            ReactiveLogicManager.Instance.OnReactiveEnable(reactive);
+        }
+
+        /// <summary>
+        /// This function must be called when the behaviour becomes disabled or inactive.
+        /// <para>
+        /// Every <see cref="IReactive"/> must call <see
+        /// cref="IReactiveExtensions.OnReactiveDisable"/> here:
+        /// </para>
+        /// <code>
+        ///void OnDisable()
+        ///{
+        ///     this.OnReactiveDisable();
+        ///}
+        /// </code>
+        /// </summary>
+        public static void OnReactiveDisable(this IReactive reactive)
+        {
+            if (ReactiveLogicManager.hasInstance)
+                ReactiveLogicManager.Instance.OnReactiveDisable(reactive);
+        }
     }
 }
