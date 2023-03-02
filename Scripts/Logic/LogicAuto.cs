@@ -9,24 +9,13 @@ namespace AlpacaIT.ReactiveLogic
         #region Required IReactive Implementation
 
         [SerializeField]
-        private ReactiveEditor _reactiveEditor;
-
-        [SerializeField]
-        [HideInInspector]
-        private List<ReactiveOutput> _reactiveOutputs = new List<ReactiveOutput>();
-        public List<ReactiveOutput> reactiveOutputs => _reactiveOutputs;
-
+        private ReactiveData _reactiveData;
+        public ReactiveData reactiveData => _reactiveData;
         public ReactiveMetadata reactiveMetadata => _reactiveMeta;
 
-        private void OnEnable()
-        {
-            this.OnReactiveEnable();
-        }
+        private void OnEnable() => this.OnReactiveEnable();
 
-        private void OnDisable()
-        {
-            this.OnReactiveDisable();
-        }
+        private void OnDisable() => this.OnReactiveDisable();
 
         #endregion Required IReactive Implementation
 

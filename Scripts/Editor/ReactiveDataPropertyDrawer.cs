@@ -7,8 +7,8 @@ using UnityEngine;
 namespace AlpacaIT.ReactiveLogic.Editor
 {
     /// <summary>Adds a custom inspector to all reactive logic components.</summary>
-    [CustomPropertyDrawer(typeof(ReactiveEditor))]
-    public class ReactiveEditorPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ReactiveData))]
+    public class ReactiveDataPropertyDrawer : PropertyDrawer
     {
         #region Workaround to get a halfway decent OnGUI method
 
@@ -80,7 +80,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 int actionMoveFrom = 0;
                 int actionMoveTo = 0;
 
-                var sOutputs = serializedObject.FindProperty("_reactiveOutputs");
+                var sOutputs = serializedObject.FindProperty("_reactiveData.outputs");
                 if (sOutputs != null)
                 {
                     if (gui) EditorGUI.LabelField(position, "Outputs: " + sOutputs.arraySize, EditorStyles.boldLabel); position.y += 20f;

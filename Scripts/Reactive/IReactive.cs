@@ -3,7 +3,21 @@ using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>Implement this interface to make your <see cref="MonoBehaviour"/> reactive.</summary>
+    /// <summary>Implement this interface to make your <see cref="MonoBehaviour"/> reactive.
+    /// <para>Every <see cref="IReactive"/> should be implemented like this:</para>
+    /// <code>
+    ///[SerializeField]
+    ///private ReactiveData _reactiveData;
+    ///public ReactiveData reactiveData =&gt; _reactiveData;
+    ///public ReactiveMetadata reactiveMetadata =&gt; _reactiveMeta;
+    ///
+    ///private void OnEnable() =&gt; this.OnReactiveEnable();
+    ///
+    ///private void OnDisable() =&gt; this.OnReactiveDisable();
+    ///
+    ///private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(...);
+    /// </code>
+    /// </summary>
     public interface IReactive
     {
         /// <summary>
@@ -18,26 +32,20 @@ namespace AlpacaIT.ReactiveLogic
         /// Gets metadata for the <see cref="IReactive"/>. This contains a list of inputs, outputs,
         /// parameters and descriptions among other things. This is primarily used to support the
         /// game developer within Unity Editor and is not a requirement for function.
-        /// <para>For full Unity Editor support it should always be implemented like this:</para>
-        /// <code>
-        ///[SerializeField]
-        ///private ReactiveEditor _reactiveEditor;
-        ///
-        ///public ReactiveMetadata reactiveMetadata =&gt; _reactiveMeta;
-        ///private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata();</code>
-        /// <para>The 'reactiveEditor' adds a section to the Unity Inspector. We set it to private
-        /// and expose it with [SerializeField] to keep the code clean. The 'reactiveMetadata' is a
-        /// required property that accesses 'reactiveMeta' to prevent instantiating the class every
-        /// time the property is accessed. It's also static to keep the memory footprint low and to
-        /// prevent instantiating the class whenever the component gets created.</para>
+        /// <para>
+        /// It's recommended to make the returned value static to keep the memory footprint low and
+        /// to prevent instantiating the <see cref="ReactiveMetadata"/> whenever the component gets created.
+        /// </para>
         /// </summary>
         public ReactiveMetadata reactiveMetadata { get; }
 
         /// <summary>
-        /// Gets a list of user-configured output handlers of the <see cref="IReactive"/>. These
-        /// outputs are usually configured in Unity Editor by the level designer.
+        /// Gets the runtime data of the <see cref="IReactive"/> including a list of user-configured
+        /// output handlers. This data is usually configured in Unity Editor by the level designer
+        /// or used internally by the <see cref="ReactiveLogicManager"/> and preferably should not
+        /// be modified from user-scripts.
         /// </summary>
-        public List<ReactiveOutput> reactiveOutputs { get; }
+        public ReactiveData reactiveData { get; }
 
         /// <summary>
         /// Called when an input gets invoked on this <see cref="IReactive"/>. This input may invoke

@@ -18,7 +18,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
         public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name)
         {
-            var outputs = reactive.reactiveOutputs;
+            var outputs = reactive.reactiveData.outputs;
             var outputsCount = outputs.Count;
             for (int i = 0; i < outputsCount; i++)
             {
@@ -46,7 +46,7 @@ namespace AlpacaIT.ReactiveLogic
         /// </param>
         public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name, object parameter)
         {
-            var outputs = reactive.reactiveOutputs;
+            var outputs = reactive.reactiveData.outputs;
             var outputsCount = outputs.Count;
             for (int i = 0; i < outputsCount; i++)
             {
