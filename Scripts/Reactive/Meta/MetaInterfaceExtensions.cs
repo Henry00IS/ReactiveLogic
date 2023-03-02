@@ -23,6 +23,9 @@ namespace AlpacaIT.ReactiveLogic
         public static List<MetaInterface> GetInputs(this ICollection<MetaInterface> interfaces)
         {
             var results = new List<MetaInterface>(interfaces.Count);
+            results.Add(new MetaInterface(MetaInterfaceType.Input, "Enable", "Enables the reactive logic component allowing it to receive inputs and invoke outputs."));
+            results.Add(new MetaInterface(MetaInterfaceType.Input, "Disable", "Disables the reactive logic component so that it can't receive inputs nor invoke outputs."));
+
             foreach (var iface in interfaces)
                 if (iface.type == MetaInterfaceType.Input)
                     results.Add(iface);
@@ -44,6 +47,9 @@ namespace AlpacaIT.ReactiveLogic
         /// <returns>The list of <see cref="GUIContent"/> inputs.</returns>
         public static void GetInputsAsGUIContents(this ICollection<MetaInterface> interfaces, List<GUIContent> results)
         {
+            results.Add(new GUIContent("Enable", "Enables the reactive logic component allowing it to receive inputs and invoke outputs."));
+            results.Add(new GUIContent("Disable", "Disables the reactive logic component so that it can't receive inputs nor invoke outputs."));
+
             foreach (var iface in interfaces)
                 if (iface.type == MetaInterfaceType.Input)
                     results.Add(new GUIContent(iface.name, iface.description));

@@ -8,6 +8,9 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>
         /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
         /// specified output <paramref name="name"/>.
+        /// <para>
+        /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
+        /// </para>
         /// </summary>
         /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
         /// <param name="activator">
@@ -18,6 +21,8 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
         public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name)
         {
+            if (!reactive.reactiveData.enabled) return;
+
             var outputs = reactive.reactiveData.outputs;
             var outputsCount = outputs.Count;
             for (int i = 0; i < outputsCount; i++)
@@ -32,6 +37,9 @@ namespace AlpacaIT.ReactiveLogic
         /// <summary>
         /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
         /// specified output <paramref name="name"/>.
+        /// <para>
+        /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
+        /// </para>
         /// </summary>
         /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
         /// <param name="activator">
@@ -46,6 +54,8 @@ namespace AlpacaIT.ReactiveLogic
         /// </param>
         public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name, object parameter)
         {
+            if (!reactive.reactiveData.enabled) return;
+
             var outputs = reactive.reactiveData.outputs;
             var outputsCount = outputs.Count;
             for (int i = 0; i < outputsCount; i++)

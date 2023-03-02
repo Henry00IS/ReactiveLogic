@@ -37,7 +37,7 @@ namespace AlpacaIT.ReactiveLogic
         private List<IReactive> reactives = new List<IReactive>();
 
         /// <summary>The list of active chains that are executing.</summary>
-        private List<ReactiveChainLink> chains = new List<ReactiveChainLink>();
+        private LinkedList<ReactiveChainLink> chains = new LinkedList<ReactiveChainLink>();
 
         /// <summary>Iterates over all components in the scene that implement <typeparamref name="T"/>.</summary>
         /// <typeparam name="T">The interface type that components should have implemented.</typeparam>
@@ -162,7 +162,7 @@ namespace AlpacaIT.ReactiveLogic
         public void ScheduleInput(GameObject activator, IReactive caller, string target, string input, float delay, object parameter)
         {
             foreach (var reactive in ForEachReactive(caller, target))
-                chains.Add(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveChainLinkParameter(parameter)));
+                chains.AddLast(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
         public void ScheduleInput(GameObject activator, IReactive caller, IReactive target, string input, float delay, object parameter)
         {
-            chains.Add(new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveChainLinkParameter(parameter)));
+            chains.AddLast(new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveChainLinkParameter(parameter)));
         }
 
         /// <summary>
@@ -224,22 +224,45 @@ namespace AlpacaIT.ReactiveLogic
         private void FixedUpdate()
         {
             // update all of the active chains.
-            for (int i = chains.Count; i-- > 0;)
+            var node = chains.First;
+            while (node != null)
             {
-                var chain = chains[i];
+                var next = node.Next;
+                var chain = node.Value;
 
                 // decrease the delay time remaining by delta time.
                 chain.delay -= Time.fixedDeltaTime;
                 if (chain.delay <= 0.0f)
                 {
-                    // "User"-inputs invoke the output handlers at the target reactive.
-                    if (chain.targetInputIsUserDefined)
-                        chain.target?.OnReactiveOutput(chain.activator, chain.targetInput, chain.targetParameter);
-                    else
-                        chain.target?.OnReactiveInput(chain.ToReactiveInput());
+                    // remove the chain link before processing it.
+                    chains.Remove(node);
 
-                    chains.RemoveAt(i);
+                    // make sure the target component has not been destroyed.
+                    if (chain.target != null) // confirm: should we check chain.target.gameObject here instead?
+                    {
+                        // The "Enable"-input always works.
+                        if (chain.targetInput == "Enable")
+                        {
+                            chain.target.reactiveData.enabled = true;
+                        }
+                        else if (chain.target.reactiveData.enabled)
+                        {
+                            // "Disable"-input.
+                            if (chain.targetInput == "Disable")
+                                chain.target.reactiveData.enabled = false;
+
+                            // "User"-inputs invoke the output handlers at the target reactive.
+                            else if (chain.targetInputIsUserDefined)
+                                chain.target.OnReactiveOutput(chain.activator, chain.targetInput, chain.targetParameter);
+
+                            // Invoke the input handler at the target reactive.
+                            else
+                                chain.target.OnReactiveInput(chain.ToReactiveInput());
+                        }
+                    }
                 }
+
+                node = next;
             }
         }
     }
