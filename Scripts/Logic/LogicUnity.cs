@@ -1,16 +1,26 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace AlpacaIT.ReactiveLogic.Editor
+namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>
-    /// An <see cref="IReactive"/> that executes a <see cref="UnityEvent"/> when invoked. This makes it
-    /// easy to communicate with a component that is not reactive, but it encourages visual programming,
-    /// which is a bad idea. You essentially have code in the scene that tinkers around in C# and can
-    /// cause serious bugs that are hard to trace and fix. Use this component sparingly!
+    /// An <see cref="IReactive"/> that executes a <see cref="UnityEvent"/> when invoked. This makes
+    /// it easy to communicate with a component that is not reactive, but it encourages visual
+    /// programming, which is a bad idea. You essentially have code in the scene that tinkers around
+    /// in C# and can cause serious bugs that are hard to trace and fix months from now. Use this
+    /// component sparingly!
     /// </summary>
     public class LogicUnity : MonoBehaviour, IReactive
     {
+        public enum ParameterMode
+        {
+            None,
+            Boolean,
+            Integer,
+            Float,
+            String,
+        }
+
         #region Required IReactive Implementation
 
         [SerializeField]
@@ -28,15 +38,51 @@ namespace AlpacaIT.ReactiveLogic.Editor
             new MetaInterface(MetaInterfaceType.Input, "Invoke", "Invokes the Unity event.")
         );
 
+        [Header("This component is dangerous, use sparingly!")]
+        [Space(15f, order = 1)]
+        public ParameterMode parameterMode = ParameterMode.None;
+
         [Space]
-        [Header("Use this component sparingly! See source code or wiki!")]
         public UnityEvent unityEvent;
+
+        [Space]
+        public UnityEvent<bool> unityEventBoolean;
+
+        [Space]
+        public UnityEvent<int> unityEventInteger;
+
+        [Space]
+        public UnityEvent<float> unityEventFloat;
+
+        [Space]
+        public UnityEvent<string> unityEventString;
 
         public void OnReactiveInput(ReactiveInput input)
         {
             if (input.name == "Invoke")
             {
-                unityEvent?.Invoke();
+                switch (parameterMode)
+                {
+                    case ParameterMode.None:
+                        unityEvent?.Invoke();
+                        break;
+
+                    case ParameterMode.Boolean:
+                        unityEventBoolean?.Invoke(input.parameter.GetBool());
+                        break;
+
+                    case ParameterMode.Integer:
+                        unityEventInteger?.Invoke(input.parameter.GetInt());
+                        break;
+
+                    case ParameterMode.Float:
+                        unityEventFloat?.Invoke(input.parameter.GetFloat());
+                        break;
+
+                    case ParameterMode.String:
+                        unityEventString?.Invoke(input.parameter.GetString());
+                        break;
+                }
             }
         }
     }
