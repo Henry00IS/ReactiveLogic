@@ -38,8 +38,10 @@ namespace AlpacaIT.ReactiveLogic
             new MetaInterface(MetaInterfaceType.Input, "Invoke", "Invokes the Unity event.")
         );
 
+        /// <summary>The parameter type expected to pass to the Unity event.</summary>
         [Header("This component is dangerous, use sparingly!")]
         [Space(15f, order = 1)]
+        [Tooltip("The parameter type expected to pass to the Unity event.")]
         public ParameterMode parameterMode = ParameterMode.None;
 
         [Space]
