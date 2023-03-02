@@ -34,7 +34,7 @@ namespace AlpacaIT.ReactiveLogic
         public static bool hasInstance => s_Instance;
 
         /// <summary>Collection of all reactive logic components in the scene.</summary>
-        private List<IReactive> reactives = new List<IReactive>();
+        private LinkedList<IReactive> reactives = new LinkedList<IReactive>();
 
         /// <summary>The list of active chains that are executing.</summary>
         private LinkedList<ReactiveChainLink> chains = new LinkedList<ReactiveChainLink>();
@@ -58,7 +58,7 @@ namespace AlpacaIT.ReactiveLogic
         /// </summary>
         internal void EditorUpdateReactives()
         {
-            reactives = FindObjectsOfTypeImplementing<IReactive>().ToList();
+            reactives = new LinkedList<IReactive>(FindObjectsOfTypeImplementing<IReactive>());
         }
 
         /// <summary>
@@ -92,16 +92,17 @@ namespace AlpacaIT.ReactiveLogic
             var targetNameMatcher = CreateTargetNameMatcher(name);
 
             // iterate over all reactives in the scene.
-            var reactivesCount = reactives.Count;
-            for (int i = 0; i < reactivesCount; i++)
+            var node = reactives.First;
+            while (node != null)
             {
-                var reactive = reactives[i];
+                var next = node.Next;
+                var reactive = node.Value;
 
                 // match the given target name:
                 if (reactive != null && reactive.gameObject && targetNameMatcher(reactive.gameObject.name))
-                {
                     yield return reactive;
-                }
+
+                node = next;
             }
         }
 
@@ -110,10 +111,11 @@ namespace AlpacaIT.ReactiveLogic
             var targetNameMatcher = CreateTargetNameMatcher(name);
 
             // iterate over all reactives in the scene.
-            var reactivesCount = reactives.Count;
-            for (int i = 0; i < reactivesCount; i++)
+            var node = reactives.First;
+            while (node != null)
             {
-                var reactive = reactives[i];
+                var next = node.Next;
+                var reactive = node.Value;
 
                 // match the given target name:
                 if (reactive != null && reactive.gameObject && targetNameMatcher(reactive.gameObject.name))
@@ -123,6 +125,8 @@ namespace AlpacaIT.ReactiveLogic
                     if (group == parentGroup)
                         yield return reactive;
                 }
+
+                node = next;
             }
         }
 
@@ -197,7 +201,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="reactive">The <see cref="IReactive"/> that got enabled.</param>
         public void OnReactiveEnable(IReactive reactive)
         {
-            reactives.Add(reactive);
+            reactives.AddLast(reactive);
         }
 
         /// <summary>
@@ -238,7 +242,7 @@ namespace AlpacaIT.ReactiveLogic
                     chains.Remove(node);
 
                     // make sure the target component has not been destroyed.
-                    if (chain.target != null) // confirm: should we check chain.target.gameObject here instead?
+                    if (chain.target as UnityEngine.Object) // implicit Unity bool "exists" operator.
                     {
                         // The "Enable"-input always works.
                         if (chain.targetInput == "Enable")
