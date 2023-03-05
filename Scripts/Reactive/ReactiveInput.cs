@@ -16,7 +16,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
         /// <param name="name">The name of this input that got triggered.</param>
         /// <param name="parameter">The parameter to be passed into this input.</param>
-        public ReactiveInput(GameObject activator, IReactive caller, string name, ReactiveChainLinkParameter parameter)
+        public ReactiveInput(GameObject activator, IReactive caller, string name, ReactiveParameter parameter)
         {
             this.activator = activator;
             this.caller = caller;
@@ -38,6 +38,6 @@ namespace AlpacaIT.ReactiveLogic
         public string name { get; }
 
         /// <summary>The parameter that was passed from the caller output to this input.</summary>
-        public ReactiveChainLinkParameter parameter { get; }
+        public ReactiveParameter parameter { get; }
     }
 }

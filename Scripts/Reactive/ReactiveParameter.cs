@@ -5,19 +5,19 @@ namespace AlpacaIT.ReactiveLogic
     /// <summary>
     /// Represents a parameter that is passed from <see cref="IReactive"/> outputs to inputs.
     /// </summary>
-    public class ReactiveChainLinkParameter
+    public class ReactiveParameter
     {
         /// <summary>The internal parameter value.</summary>
         private readonly string parameter = "";
 
         /// <summary>Creates a new empty parameter.</summary>
-        public ReactiveChainLinkParameter()
+        public ReactiveParameter()
         {
         }
 
         /// <summary>Creates a new instance with the specified parameter.</summary>
         /// <param name="parameter">The parameter to be stored in this instance.</param>
-        public ReactiveChainLinkParameter(object parameter)
+        public ReactiveParameter(object parameter)
         {
             // booleans are stored as either "1" or "0".
             if (parameter is bool @bool)
@@ -48,7 +48,7 @@ namespace AlpacaIT.ReactiveLogic
             }
 
             // chain link parameters are copied directly.
-            if (parameter is ReactiveChainLinkParameter reactiveChainLinkParameter)
+            if (parameter is ReactiveParameter reactiveChainLinkParameter)
             {
                 this.parameter = reactiveChainLinkParameter.parameter;
                 return;
@@ -105,16 +105,16 @@ namespace AlpacaIT.ReactiveLogic
         public bool isEmpty => string.IsNullOrEmpty(parameter);
 
         /// <summary>Converts the parameter to a <see cref="bool"/>.</summary>
-        public static explicit operator bool(ReactiveChainLinkParameter parameter) => parameter.GetBool();
+        public static explicit operator bool(ReactiveParameter parameter) => parameter.GetBool();
 
         /// <summary>Converts the parameter to an <see cref="int"/>.</summary>
-        public static explicit operator int(ReactiveChainLinkParameter parameter) => parameter.GetInt();
+        public static explicit operator int(ReactiveParameter parameter) => parameter.GetInt();
 
         /// <summary>Converts the parameter to a <see cref="float"/>.</summary>
-        public static explicit operator float(ReactiveChainLinkParameter parameter) => parameter.GetFloat();
+        public static explicit operator float(ReactiveParameter parameter) => parameter.GetFloat();
 
         /// <summary>Converts the parameter to a <see cref="string"/>.</summary>
-        public static explicit operator string(ReactiveChainLinkParameter parameter) => parameter.GetString();
+        public static explicit operator string(ReactiveParameter parameter) => parameter.GetString();
 
         /// <summary>
         /// Returns a string that represents the current parameter. Same as calling <see cref="GetString"/>.

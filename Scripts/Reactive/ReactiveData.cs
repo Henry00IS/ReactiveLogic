@@ -22,6 +22,16 @@ namespace AlpacaIT.ReactiveLogic
         /// cref="IReactive"/> will not receive any inputs and can't invoke any outputs (even if the
         /// <see cref="MonoBehaviour"/> script tries to do so). This is not the same as <see cref="Behaviour.enabled"/>.
         /// </summary>
+        [System.NonSerialized]
         public bool enabled = true;
+
+        /// <summary>
+        /// Contains the <see cref="LogicGroup"/> of the <see cref="IReactive"/>. It is assumed that
+        /// the <see cref="IReactive"/> never gets moved to a different <see cref="LogicGroup"/>
+        /// during play. This field acts as a cache to prevent many GetComponentInParent
+        /// &lt;LogicGroup&gt; calls.
+        /// </summary>
+        [System.NonSerialized]
+        public LogicGroup group = null;
     }
 }

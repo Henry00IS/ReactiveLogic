@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace AlpacaIT.ReactiveLogic
+namespace AlpacaIT.ReactiveLogic.Internal
 {
     /// <summary>Represents a link in a chain of events between two <see cref="IReactive"/>.</summary>
-    public class ReactiveChainLink
+    internal class ReactiveChainLink
     {
         /// <summary>
         /// Creates a new chain link instance containing a pending input to be invoked on an <see
@@ -15,7 +15,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="targetInput">The target input name that will be invoked.</param>
         /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
         /// <param name="targetParameter">The parameter that will be passed to the input of the target.</param>
-        public ReactiveChainLink(GameObject activator, IReactive caller, IReactive target, string targetInput, float delay, ReactiveChainLinkParameter targetParameter)
+        public ReactiveChainLink(GameObject activator, IReactive caller, IReactive target, string targetInput, float delay, ReactiveParameter targetParameter)
         {
             this.activator = activator;
             this.caller = caller;
@@ -42,7 +42,7 @@ namespace AlpacaIT.ReactiveLogic
         public string targetInput { get; }
 
         /// <summary>The parameter that will be passed to the input of the target.</summary>
-        public ReactiveChainLinkParameter targetParameter { get; }
+        public ReactiveParameter targetParameter { get; }
 
         /// <summary>
         /// Gets or sets remaining delay in seconds to wait before invoking the input on the target.
