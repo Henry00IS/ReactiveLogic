@@ -7,6 +7,9 @@ namespace AlpacaIT.ReactiveLogic
     // this partial class handles everything related to target finding.
     public partial class ReactiveLogicManager
     {
+        private const string keywordSelf = "!self";
+        private const string keywordGroup = "!group";
+
         public IEnumerable<IReactive> ForEachReactive(IReactive caller, string target)
         {
             // we ignore targets that are null or empty or just whitespace characters.
@@ -17,8 +20,7 @@ namespace AlpacaIT.ReactiveLogic
             // we check for the special ! prefix that programmatically finds a target.
             if (target[0] == '!')
             {
-                target = target.Substring(1);
-                foreach (var reactive in ForEachReactiveSpecialTarget(caller, target.TrimStart('!')))
+                foreach (var reactive in ForEachReactiveSpecialTarget(caller, target))
                     yield return reactive;
             }
             // we search for the target name with the caller as search context.
@@ -38,11 +40,11 @@ namespace AlpacaIT.ReactiveLogic
         {
             switch (keyword)
             {
-                case "self":
+                case keywordSelf:
                     yield return caller;
                     break;
 
-                case "group":
+                case keywordGroup:
                     if (caller.reactiveData.group)
                         yield return caller.reactiveData.group;
                     break;

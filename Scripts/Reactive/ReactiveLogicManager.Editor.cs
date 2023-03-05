@@ -18,5 +18,25 @@ namespace AlpacaIT.ReactiveLogic
             foreach (var reactive in reactives)
                 RefreshReactiveData(reactive);
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        internal IEnumerable<string> EditorForEachGroupUserOutput(LogicGroup group)
+        {
+            foreach (var reactive in ForEachReactiveInGroup(group))
+            {
+                var outputs = reactive.reactiveData.outputs;
+                var outputsCount = outputs.Count;
+                for (int i = 0; i < outputsCount; i++)
+                {
+                    var output = outputs[i];
+                    if (output.targetName == keywordGroup && output.targetInput.StartsWith("User"))
+                        yield return output.targetInput;
+                }
+            }
+        }
     }
 }

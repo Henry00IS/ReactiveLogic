@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 
+using AlpacaIT.ReactiveLogic.Editor.Internal;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,14 +49,75 @@ namespace AlpacaIT.ReactiveLogic.Editor
         /// <summary>This flag gets reset whenever the editor selection changes.</summary>
         private bool isNewInstance = true;
 
+        private GUIContent[] cacheReactiveOutputs;
+        private GUIContent[] cacheReactiveTargets;
+        private GUIContent[] cacheTargetInputs;
+        private string cacheTargetInputsTargetName;
+
         /// <summary>Handles setup after the editor selection changes.</summary>
-        private void OnSetup()
+        private void OnSetup(IReactive reactive)
         {
             if (!isNewInstance) return;
             isNewInstance = false;
 
             // make sure we have an up to date collection of all reactives in the scene.
             ReactiveLogicManager.Instance.EditorUpdateReactives();
+
+            // we want to prevent doing a lot of work every update so we prepare everything we need here.
+            OnSetupOutputs(reactive);
+            OnSetupTargets(reactive);
+        }
+
+        private void OnSetupOutputs(IReactive reactive)
+        {
+            // build the auto-complete list for reactive outputs.
+            var interfaces = reactive.reactiveMetadata.interfaces;
+            var reactiveOutputs = new List<GUIContent>(interfaces.Length + 4) { new GUIContent("...", "Select the name of an output to insert it.") };
+            interfaces.GetOutputsAsGUIContents(reactiveOutputs);
+
+            // special handler for groups where we find user outputs meant for the group.
+            if (reactive is LogicGroup group)
+                foreach (var groupUserOutput in ReactiveLogicManager.Instance.EditorForEachGroupUserOutput(group))
+                    reactiveOutputs.Add(new GUIContent(groupUserOutput, "An output invoked by logic inside of the group."));
+
+            cacheReactiveOutputs = reactiveOutputs.ToArray();
+        }
+
+        private void OnSetupTargets(IReactive reactive)
+        {
+            var targets = new List<GUIContent>() { new GUIContent("...", "Select the name of a target to insert it.") };
+            HashSet<string> targetNames = new HashSet<string>();
+
+            // build the auto-complete list for all possible context sensitive targets.
+            foreach (var target in ReactiveLogicManager.Instance.ForEachReactive(reactive, "*")) // we use the wildcard! brilliant!
+            {
+                var name = target.gameObject.name;
+                if (targetNames.Add(name))
+                    targets.Add(new GUIContent(name, $"Targets {name} ({target.GetType().Name})."));
+            }
+
+            // we order the list alphabetically.
+            cacheReactiveTargets = targets.OrderBy(t => t.text).ToArray();
+        }
+
+        private void OnRefreshInputs(IReactive reactive, string target)
+        {
+            if (cacheTargetInputsTargetName == target) return;
+            cacheTargetInputsTargetName = target;
+
+            var options = new List<GUIContent>() { new GUIContent("...", "Select the name of an input to insert it.") };
+            HashSet<string> inputNames = new HashSet<string>();
+
+            // build the auto-complete list for all possible inputs in all the selected targets.
+            foreach (var targetReactive in ReactiveLogicManager.Instance.ForEachReactive(reactive, target))
+                foreach (var targetInput in targetReactive.reactiveMetadata.interfaces.ForEachInput())
+                {
+                    var name = targetInput.name;
+                    if (inputNames.Add(name))
+                        options.Add(new GUIContent(name, targetInput.description));
+                }
+
+            cacheTargetInputs = options.ToArray();
         }
 
         /// <summary>
@@ -67,15 +130,22 @@ namespace AlpacaIT.ReactiveLogic.Editor
         private void OnActualGUI(IReactive reactive, SerializedObject serializedObject, bool gui, ref Rect position)
         {
             // handle first-time setup after editor selection changes.
-            OnSetup();
+            OnSetup(reactive);
+
+            // prepare the editor gui methods for this step.
+            HenryEditorGUI.rectInitial = position;
+            HenryEditorGUI.rect = position;
+            HenryEditorGUI.active = gui;
 
             try
             {
-                if (gui) EditorGUI.indentLevel++;
+                HenryEditorGUI.indentLevel++;
 
+                // state for the delete action.
                 bool actionDelete = false;
                 int actionDeleteIndex = 0;
 
+                // state for the move actions.
                 bool actionMove = false;
                 int actionMoveFrom = 0;
                 int actionMoveTo = 0;
@@ -83,9 +153,9 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 var sOutputs = serializedObject.FindProperty("_reactiveData.outputs");
                 if (sOutputs != null)
                 {
-                    if (gui) EditorGUI.LabelField(position, "Outputs: " + sOutputs.arraySize, EditorStyles.boldLabel); position.y += 20f;
+                    HenryEditorGUI.LabelField("Outputs: " + sOutputs.arraySize, EditorStyles.boldLabel);
 
-                    position.y += 5f;
+                    HenryEditorGUI.Space(5);
 
                     for (int i = 0; i < sOutputs.arraySize; i++)
                     {
@@ -97,75 +167,95 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInput));
                         var sOutputParameter = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInputParameter));
 
-                        var pos1 = position;
-                        pos1.x += 20f;
-                        pos1.width -= 55f;
+                        GetHorizontalWidths(HenryEditorGUI.rect, out var width1, out var width2);
 
-                        var pos2 = position;
-                        pos2.x += 20f;
-                        pos2.width = 30f;
-                        pos2.x += pos1.width + 5f;
+                        // display the output name auto-complete, output name, output delay and remove button.
 
-                        if (gui)
+                        string text = sOutputName.stringValue;
+                        HenryEditorGUI.Horizontal(width1, width2 - 100, 50, 50, () =>
                         {
-                            (sOutputName.stringValue, sOutputDelay.floatValue) = TextFieldReactableOutputsPopup(pos1, reactive.reactiveMetadata.interfaces, sOutputName.stringValue, sOutputDelay.floatValue);
-
-                            if (GUI.Button(pos2, EditorGUIUtility.IconContent("d_TreeEditor.Trash", "Remove Output")))
+                            int defaultSelection = FindGuiContentsTextIndex(cacheReactiveOutputs, text);
+                            int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheReactiveOutputs);
+                            if (selectedIndex != 0 && selectedIndex != defaultSelection)
+                                text = cacheReactiveOutputs[selectedIndex].text;
+                        }, () =>
+                        {
+                            sOutputName.stringValue = HenryEditorGUI.TextField(text);
+                        }, () =>
+                        {
+                            sOutputDelay.floatValue = HenryEditorGUI.FloatField(sOutputDelay.floatValue);
+                        }, () =>
+                        {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("d_TreeEditor.Trash", "Remove Output")))
                             {
                                 actionDelete = true;
                                 actionDeleteIndex = i;
                             }
-                        }
-                        position.y += 20f; pos1.y += 20f; pos2.y += 20f;
+                        });
 
-                        if (gui)
+                        // display the target name auto-complete, target name and move up button.
+
+                        text = sOutputTarget.stringValue;
+                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
                         {
-                            sOutputTarget.stringValue = PrefixTextField(pos1, new GUIContent("Target", "The name of the target that will receive this input."), sOutputTarget.stringValue);
-
-                            if (GUI.Button(pos2, EditorGUIUtility.IconContent("CollabPush", "Move Output Up")))
+                            int defaultSelection = FindGuiContentsTextIndex(cacheReactiveTargets, text);
+                            int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheReactiveTargets);
+                            if (selectedIndex != 0 && selectedIndex != defaultSelection)
+                                text = cacheReactiveTargets[selectedIndex].text;
+                        }, () =>
+                        {
+                            sOutputTarget.stringValue = HenryEditorGUI.TextField(text);
+                        }, () =>
+                        {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPush", "Move Output Up")))
                             {
                                 actionMove = true;
                                 actionMoveFrom = i;
                                 actionMoveTo = i - 1;
                             }
-                        }
-                        position.y += 20f; pos1.y += 20f; pos2.y += 20f;
+                        });
 
-                        if (gui)
+                        // this is fast to call due to a cache.
+                        OnRefreshInputs(reactive, text);
+
+                        text = sOutputTargetInput.stringValue;
+                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
                         {
-                            sOutputTargetInput.stringValue = TextFieldReactableInputsPopup(reactive, pos1, sOutputTarget.stringValue, sOutputTargetInput.stringValue);
-
-                            if (GUI.Button(pos2, EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
+                            int defaultSelection = FindGuiContentsTextIndex(cacheTargetInputs, text);
+                            int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheTargetInputs);
+                            if (selectedIndex != 0 && selectedIndex != defaultSelection)
+                                text = cacheTargetInputs[selectedIndex].text;
+                        }, () =>
+                        {
+                            sOutputTargetInput.stringValue = HenryEditorGUI.TextField(text);
+                        }, () =>
+                        {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
                             {
                                 actionMove = true;
                                 actionMoveFrom = i;
                                 actionMoveTo = i + 1;
                             }
-                        }
-                        position.y += 20f; pos1.y += 20f; pos2.y += 20f;
+                        });
 
-                        if (gui)
+                        text = sOutputParameter.stringValue;
+                        HenryEditorGUI.Horizontal(width1, width2 - 50, () =>
                         {
-                            sOutputParameter.stringValue = PrefixTextField(pos1, new GUIContent("Parameter", "The parameter that will be passed from this output to the input."), sOutputParameter.stringValue);
-                        }
-                        position.y += 20f; pos1.y += 20f; pos2.y += 20f;
+                            HenryEditorGUI.LabelField("Parameter:");
+                        }, () =>
+                        {
+                            sOutputParameter.stringValue = HenryEditorGUI.TextField(text);
+                        });
 
-                        position.y += 10f;
+                        HenryEditorGUI.Space(10);
                     }
 
-                    position.y += 5f;
-
-                    if (gui)
+                    if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
                     {
-                        var pos1 = position;
-                        pos1.x += 35f;
-                        pos1.width -= 70f;
-                        if (GUI.Button(pos1, EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
-                        {
-                            sOutputs.InsertArrayElementAtIndex(sOutputs.arraySize);
-                        }
+                        sOutputs.InsertArrayElementAtIndex(sOutputs.arraySize);
                     }
-                    position.y += 30f;
+
+                    HenryEditorGUI.Space(5);
                 }
 
                 if (actionDelete)
@@ -177,6 +267,8 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 {
                     sOutputs.MoveArrayElement(actionMoveFrom, actionMoveTo);
                 }
+
+                position = HenryEditorGUI.rect;
             }
             catch
             {
@@ -184,97 +276,28 @@ namespace AlpacaIT.ReactiveLogic.Editor
             }
             finally
             {
-                if (gui) EditorGUI.indentLevel--;
+                HenryEditorGUI.indentLevel--;
             }
         }
 
-        private (string, float) TextFieldReactableOutputsPopup(Rect position, MetaInterface[] interfaces, string text, float delay)
+        private int FindGuiContentsTextIndex(GUIContent[] options, string text)
         {
-            GetHorizontalRects(position, out var pos1, out var pos2);
-
-            var options = new List<GUIContent>(interfaces.Length + 1) { new GUIContent("...", "Select the name of an output to insert it.") };
-            interfaces.GetOutputsAsGUIContents(options);
-
             // if the current text matches an input name we select that by default.
-            int defaultSelection = 0;
-            var optionsCount = options.Count;
+            int result = 0;
+            var optionsCount = options.Length;
             for (int i = 0; i < optionsCount; i++)
                 if (options[i].text == text)
-                    defaultSelection = i;
-
-            // allow the user to select the value.
-            var selected = EditorGUI.Popup(pos1, defaultSelection, options.ToArray()); position.y += 20f;
-            if (selected != 0 && selected != defaultSelection)
-                text = options[selected].text;
-
-            GetHorizontalInverseRects(pos2, out var pos3, out var pos4);
-
-            text = EditorGUI.TextField(pos3, text);
-            delay = EditorGUI.FloatField(pos4, delay);
-            return (text, delay);
+                    result = i;
+            return result;
         }
 
-        /// <summary>
-        /// Caches the list of possible inputs for a target name. This gets reset whenever the
-        /// selection changes in Unity Editor.
-        /// </summary>
-        private Dictionary<string, List<GUIContent>> targetInputsCache = new Dictionary<string, List<GUIContent>>();
-
-        private string TextFieldReactableInputsPopup(IReactive caller, Rect position, string target, string text)
+        private void GetHorizontalWidths(Rect position, out float width1, out float width2)
         {
-            GetHorizontalRects(position, out var pos1, out var pos2);
+            width1 = position.width;
+            width1 /= 3f;
 
-            // look in the target reactives for input names.
-            if (!targetInputsCache.TryGetValue(target, out var options))
-            {
-                options = new List<GUIContent>() { new GUIContent("...", "Select the name of an input to insert it.") };
-                foreach (var reactive in ReactiveLogicManager.Instance.ForEachReactive(caller, target))
-                    reactive.reactiveMetadata.interfaces.GetInputsAsGUIContents(options);
-
-                targetInputsCache.Add(target, options);
-            }
-
-            // if the current text matches an input name we select that by default.
-            int defaultSelection = 0;
-            var optionsCount = options.Count;
-            for (int i = 0; i < optionsCount; i++)
-                if (options[i].text == text)
-                    defaultSelection = i;
-
-            // allow the user to select the value.
-            var selected = EditorGUI.Popup(pos1, defaultSelection, options.ToArray()); position.y += 20f;
-            if (selected != 0 && selected != defaultSelection)
-                text = options[selected].text;
-
-            return EditorGUI.TextField(pos2, text);
-        }
-
-        private string PrefixTextField(Rect position, GUIContent label, string text)
-        {
-            GetHorizontalRects(position, out var pos1, out var pos2);
-
-            EditorGUI.LabelField(pos1, label.text);
-            return EditorGUI.TextField(pos2, text);
-        }
-
-        private void GetHorizontalRects(Rect position, out Rect pos1, out Rect pos2)
-        {
-            pos1 = position;
-            pos1.width /= 3f;
-
-            pos2 = position;
-            pos2.width -= pos1.width;
-            pos2.x += pos1.width;
-        }
-
-        private void GetHorizontalInverseRects(Rect position, out Rect pos1, out Rect pos2)
-        {
-            pos1 = position;
-            pos1.width = pos1.width - (pos1.width / 3f);
-
-            pos2 = position;
-            pos2.width -= pos1.width;
-            pos2.x += pos1.width;
+            width2 = position.width;
+            width2 -= width1;
         }
     }
 }
