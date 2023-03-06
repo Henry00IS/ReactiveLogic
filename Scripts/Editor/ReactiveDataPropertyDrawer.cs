@@ -180,6 +180,10 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 bool actionSelectTargets = false;
                 string actionSelectTarget = "";
 
+                // state for the paste action.
+                bool actionPaste = false;
+                int actionPasteIndex = 0;
+
                 var sOutputs = serializedObject.FindProperty("_reactiveData.outputs");
                 if (sOutputs != null)
                 {
@@ -202,7 +206,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         // display the output name auto-complete, output name, output delay and remove button.
 
                         string text = sOutputName.stringValue;
-                        HenryEditorGUI.Horizontal(width1, width2 - 100, 50, 50, () =>
+                        HenryEditorGUI.Horizontal(width1, width2 - 115, 50, 65, () =>
                         {
                             int defaultSelection = FindGuiContentsTextIndex(cacheReactiveOutputs, text);
                             int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheReactiveOutputs);
@@ -226,7 +230,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         // display the target name auto-complete, target name and move up button.
 
                         text = sOutputTarget.stringValue;
-                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
+                        HenryEditorGUI.Horizontal(width1, width2 - 65, 65, () =>
                         {
                             int defaultSelection = FindGuiContentsTextIndex(cacheReactiveTargets, text);
                             int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheReactiveTargets);
@@ -248,7 +252,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         OnRefreshInputs(reactive, text);
 
                         text = sOutputTargetInput.stringValue;
-                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
+                        HenryEditorGUI.Horizontal(width1, width2 - 65, 40, 40, () =>
                         {
                             int defaultSelection = FindGuiContentsTextIndex(cacheTargetInputs, text);
                             int selectedIndex = HenryEditorGUI.Popup(defaultSelection, cacheTargetInputs);
@@ -259,7 +263,15 @@ namespace AlpacaIT.ReactiveLogic.Editor
                             sOutputTargetInput.stringValue = HenryEditorGUI.TextField(text);
                         }, () =>
                         {
-                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPush", "Move Output Up")))
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
+                            {
+                                actionMove = true;
+                                actionMoveFrom = i;
+                                actionMoveTo = i + 1;
+                            }
+                        }, () =>
+                        {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPush", "Move Output Up"), false))
                             {
                                 actionMove = true;
                                 actionMoveFrom = i;
@@ -268,7 +280,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
                         });
 
                         text = sOutputParameter.stringValue;
-                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
+                        HenryEditorGUI.Horizontal(width1, width2 - 65, 40, 40, () =>
                         {
                             HenryEditorGUI.LabelField("Parameter:");
                         }, () =>
@@ -276,21 +288,44 @@ namespace AlpacaIT.ReactiveLogic.Editor
                             sOutputParameter.stringValue = HenryEditorGUI.TextField(text);
                         }, () =>
                         {
-                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("TreeEditor.Duplicate", "Copy")))
                             {
-                                actionMove = true;
-                                actionMoveFrom = i;
-                                actionMoveTo = i + 1;
+                                // copy this entry to the clipboard.
+                                EditorGUIUtility.systemCopyBuffer = JsonUtility.ToJson(new ReactiveOutput()
+                                {
+                                    name = sOutputName.stringValue,
+                                    targetName = sOutputTarget.stringValue,
+                                    targetInput = sOutputTargetInput.stringValue,
+                                    targetInputParameter = sOutputParameter.stringValue,
+                                    delay = sOutputDelay.floatValue
+                                });
+                            }
+                        }, () =>
+                        {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("Clipboard", "Paste"), false))
+                            {
+                                actionPaste = true;
+                                actionPasteIndex = i;
                             }
                         });
 
                         HenryEditorGUI.Space(10);
                     }
 
-                    if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
+                    HenryEditorGUI.Horizontal(HenryEditorGUI.rect.width - 65, 65, () =>
                     {
-                        sOutputs.InsertArrayElementAtIndex(sOutputs.arraySize);
-                    }
+                        if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CreateAddNew", "Add Output")))
+                        {
+                            sOutputs.InsertArrayElementAtIndex(sOutputs.arraySize);
+                        }
+                    }, () =>
+                    {
+                        if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("Clipboard", "Paste")))
+                        {
+                            actionPaste = true;
+                            actionPasteIndex = sOutputs.arraySize;
+                        }
+                    });
 
                     HenryEditorGUI.Space(5);
                 }
@@ -312,6 +347,31 @@ namespace AlpacaIT.ReactiveLogic.Editor
                     {
                         EditorGUIUtility.PingObject(reactive.gameObject);
                         Selection.objects = objects;
+                    }
+                }
+
+                if (actionPaste)
+                {
+                    // create entry from the clipboard.
+                    try
+                    {
+                        // this can throw an exception when it fails to parse the data.
+                        var clipboardOutput = JsonUtility.FromJson<ReactiveOutput>(EditorGUIUtility.systemCopyBuffer);
+                        sOutputs.InsertArrayElementAtIndex(actionPasteIndex);
+                        var sOutput = sOutputs.GetArrayElementAtIndex(actionPasteIndex);
+                        var sOutputName = sOutput.FindPropertyRelative(nameof(ReactiveOutput.name));
+                        var sOutputDelay = sOutput.FindPropertyRelative(nameof(ReactiveOutput.delay));
+                        var sOutputTarget = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetName));
+                        var sOutputTargetInput = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInput));
+                        var sOutputParameter = sOutput.FindPropertyRelative(nameof(ReactiveOutput.targetInputParameter));
+                        sOutputName.stringValue = clipboardOutput.name;
+                        sOutputDelay.floatValue = clipboardOutput.delay;
+                        sOutputTarget.stringValue = clipboardOutput.targetName;
+                        sOutputTargetInput.stringValue = clipboardOutput.targetInput;
+                        sOutputParameter.stringValue = clipboardOutput.targetInputParameter;
+                    }
+                    catch
+                    {
                     }
                 }
 

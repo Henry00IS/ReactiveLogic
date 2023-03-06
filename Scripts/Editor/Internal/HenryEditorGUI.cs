@@ -65,12 +65,15 @@ namespace AlpacaIT.ReactiveLogic.Editor.Internal
             Space();
         }
 
-        public static bool Button(GUIContent guiContent)
+        public static bool Button(GUIContent guiContent, bool space = true)
         {
             if (!active) { Space(); return false; };
 
             var crect = rect;
-            crect.x += 15f;
+            if (space)
+            {
+                crect.x += 15f;
+            }
             crect.width -= 15f;
             var result = GUI.Button(crect, guiContent);
             Space();
