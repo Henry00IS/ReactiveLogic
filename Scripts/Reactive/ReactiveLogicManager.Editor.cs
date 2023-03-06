@@ -20,21 +20,47 @@ namespace AlpacaIT.ReactiveLogic
         }
 
         /// <summary>
-        ///
+        /// Iterates over all child <see cref="IReactive"/> logic inside of a group and finds output
+        /// names starting with the "Group"-prefix. The returned names do not have the prefix.
         /// </summary>
-        /// <param name="group"></param>
-        /// <returns></returns>
-        internal IEnumerable<string> EditorForEachGroupUserOutput(LogicGroup group)
+        /// <param name="group">The group to find outputs for.</param>
+        internal IEnumerable<string> EditorForEachGroupOutput(LogicGroup group)
         {
             foreach (var reactive in ForEachReactiveInGroup(group))
             {
+                // skip groups inside of groups.
+                if (reactive is LogicGroup) continue;
+
                 var outputs = reactive.reactiveData.outputs;
                 var outputsCount = outputs.Count;
                 for (int i = 0; i < outputsCount; i++)
                 {
                     var output = outputs[i];
-                    if (output.targetName == keywordGroup && output.targetInput.StartsWith("User"))
-                        yield return output.targetInput;
+                    if (output.targetName == keywordGroup && output.targetInput.StartsWith("Group"))
+                        yield return output.targetInput.Substring(5);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Iterates over all child <see cref="IReactive"/> logic inside of a group and finds input
+        /// names starting with the "Group"-prefix. The returned names do not have the prefix.
+        /// </summary>
+        /// <param name="group">The group to find inputs for.</param>
+        internal IEnumerable<string> EditorForEachGroupInput(LogicGroup group)
+        {
+            foreach (var reactive in ForEachReactiveInGroup(group))
+            {
+                // skip groups inside of groups.
+                if (reactive is LogicGroup) continue;
+
+                var outputs = reactive.reactiveData.outputs;
+                var outputsCount = outputs.Count;
+                for (int i = 0; i < outputsCount; i++)
+                {
+                    var output = outputs[i];
+                    if (output.name.StartsWith("Group"))
+                        yield return output.name.Substring(5);
                 }
             }
         }

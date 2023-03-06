@@ -75,10 +75,18 @@ namespace AlpacaIT.ReactiveLogic.Editor
             var reactiveOutputs = new List<GUIContent>(interfaces.Length + 4) { new GUIContent("...", "Select the name of an output to insert it.") };
             interfaces.GetOutputsAsGUIContents(reactiveOutputs);
 
-            // special handler for groups where we find user outputs meant for the group.
+            // special handler for groups where we find outputs meant for the group.
             if (reactive is LogicGroup group)
-                foreach (var groupUserOutput in ReactiveLogicManager.Instance.EditorForEachGroupUserOutput(group))
-                    reactiveOutputs.Add(new GUIContent(groupUserOutput, "An output invoked by logic inside of the group."));
+            {
+                foreach (var groupOutput in ReactiveLogicManager.Instance.EditorForEachGroupOutput(group))
+                    reactiveOutputs.Add(new GUIContent(groupOutput, "An output invoked by logic inside of the group."));
+            }
+            // special handler when the reactive is part of a group to add group inputs.
+            else if (reactive.reactiveData.group)
+            {
+                foreach (var groupInput in ReactiveLogicManager.Instance.EditorForEachGroupInput(reactive.reactiveData.group))
+                    reactiveOutputs.Add(new GUIContent("Group" + groupInput, "An input invoked on the group."));
+            }
 
             cacheReactiveOutputs = reactiveOutputs.ToArray();
         }
@@ -110,12 +118,30 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
             // build the auto-complete list for all possible inputs in all the selected targets.
             foreach (var targetReactive in ReactiveLogicManager.Instance.ForEachReactive(reactive, target))
+            {
+                // check the meta data of the reactive.
                 foreach (var targetInput in targetReactive.reactiveMetadata.interfaces.ForEachInput())
                 {
                     var name = targetInput.name;
                     if (inputNames.Add(name))
                         options.Add(new GUIContent(name, targetInput.description));
                 }
+
+                // special handler for groups where we find group inputs.
+                if (targetReactive is LogicGroup group)
+                {
+                    foreach (var groupInput in ReactiveLogicManager.Instance.EditorForEachGroupInput(group))
+                        options.Add(new GUIContent(groupInput, "An input invoking logic inside of the group."));
+                }
+
+                // special handler when the reactive is part of a group to add group outputs but
+                // only when it targets the group.
+                if (target == ReactiveLogicManager.keywordGroup && reactive.reactiveData.group)
+                {
+                    foreach (var groupOutput in ReactiveLogicManager.Instance.EditorForEachGroupOutput(reactive.reactiveData.group))
+                        options.Add(new GUIContent("Group" + groupOutput, "An output invoked on the group."));
+                }
+            }
 
             cacheTargetInputs = options.ToArray();
         }

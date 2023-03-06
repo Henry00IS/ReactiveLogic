@@ -54,7 +54,7 @@ namespace AlpacaIT.ReactiveLogic.Internal
         /// output at the target <see cref="IReactive"/> with the same name, instead of calling the
         /// <see cref="IReactive.OnReactiveInput"/> method.
         /// </summary>
-        public bool targetInputIsUserDefined => targetInput.StartsWith("User");
+        public bool targetInputIsUserInput => targetInput.StartsWith("User");
 
         /// <summary>
         /// Returns a new <see cref="ReactiveInput"/> that can be passed into the <see

@@ -154,7 +154,7 @@ namespace AlpacaIT.ReactiveLogic
                                 chain.target.reactiveData.enabled = false;
 
                             // "User"-inputs invoke the output handlers at the target reactive.
-                            else if (chain.targetInputIsUserDefined)
+                            else if (chain.targetInputIsUserInput)
                                 chain.target.OnReactiveOutput(chain.activator, chain.targetInput, chain.targetParameter);
 
                             // Invoke the input handler at the target reactive.

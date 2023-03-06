@@ -7,8 +7,8 @@ namespace AlpacaIT.ReactiveLogic
     // this partial class handles everything related to target finding.
     public partial class ReactiveLogicManager
     {
-        private const string keywordSelf = "!self";
-        private const string keywordGroup = "!group";
+        internal const string keywordSelf = "!self";
+        internal const string keywordGroup = "!group";
 
         public IEnumerable<IReactive> ForEachReactive(IReactive caller, string target)
         {
@@ -98,7 +98,7 @@ namespace AlpacaIT.ReactiveLogic
         /// The <see cref="LogicGroup"/> that the <see cref="IReactive"/> components in the scene
         /// must be a part of.
         /// </param>
-        private IEnumerable<IReactive> ForEachReactiveInGroup(LogicGroup group)
+        internal IEnumerable<IReactive> ForEachReactiveInGroup(LogicGroup group)
         {
             Debug.Assert(group, "The group can not be null!");
 

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
@@ -26,6 +25,21 @@ namespace AlpacaIT.ReactiveLogic
 
         public void OnReactiveInput(ReactiveInput input)
         {
+            // "Group"-inputs are treated as outputs without the "Group" prefix.
+            if (input.name.StartsWith("Group"))
+            {
+                this.OnReactiveOutput(input.activator, input.name.Substring(5), input.parameter);
+            }
+            // every input is treated as a broadcast with an added "Group" prefix.
+            else
+            {
+                var manager = ReactiveLogicManager.Instance;
+                foreach (var reactive in manager.ForEachReactiveInGroup(this))
+                {
+                    if (reactive is LogicGroup) continue; // ignore groups in groups.
+                    reactive.OnReactiveOutput(input.activator, "Group" + input.name, input.parameter);
+                }
+            }
         }
     }
 }
