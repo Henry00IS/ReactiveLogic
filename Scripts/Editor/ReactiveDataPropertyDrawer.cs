@@ -176,6 +176,10 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 int actionMoveFrom = 0;
                 int actionMoveTo = 0;
 
+                // state for the ping targets action.
+                bool actionSelectTargets = false;
+                string actionSelectTarget = "";
+
                 var sOutputs = serializedObject.FindProperty("_reactiveData.outputs");
                 if (sOutputs != null)
                 {
@@ -233,11 +237,10 @@ namespace AlpacaIT.ReactiveLogic.Editor
                             sOutputTarget.stringValue = HenryEditorGUI.TextField(text);
                         }, () =>
                         {
-                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPush", "Move Output Up")))
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("d_BuildSettings.SelectedIcon", "Select Targets")))
                             {
-                                actionMove = true;
-                                actionMoveFrom = i;
-                                actionMoveTo = i - 1;
+                                actionSelectTargets = true;
+                                actionSelectTarget = sOutputTarget.stringValue;
                             }
                         });
 
@@ -256,21 +259,29 @@ namespace AlpacaIT.ReactiveLogic.Editor
                             sOutputTargetInput.stringValue = HenryEditorGUI.TextField(text);
                         }, () =>
                         {
+                            if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPush", "Move Output Up")))
+                            {
+                                actionMove = true;
+                                actionMoveFrom = i;
+                                actionMoveTo = i - 1;
+                            }
+                        });
+
+                        text = sOutputParameter.stringValue;
+                        HenryEditorGUI.Horizontal(width1, width2 - 50, 50, () =>
+                        {
+                            HenryEditorGUI.LabelField("Parameter:");
+                        }, () =>
+                        {
+                            sOutputParameter.stringValue = HenryEditorGUI.TextField(text);
+                        }, () =>
+                        {
                             if (HenryEditorGUI.Button(EditorGUIUtility.IconContent("CollabPull", "Move Output Down")))
                             {
                                 actionMove = true;
                                 actionMoveFrom = i;
                                 actionMoveTo = i + 1;
                             }
-                        });
-
-                        text = sOutputParameter.stringValue;
-                        HenryEditorGUI.Horizontal(width1, width2 - 50, () =>
-                        {
-                            HenryEditorGUI.LabelField("Parameter:");
-                        }, () =>
-                        {
-                            sOutputParameter.stringValue = HenryEditorGUI.TextField(text);
                         });
 
                         HenryEditorGUI.Space(10);
@@ -292,6 +303,16 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 if (actionMove)
                 {
                     sOutputs.MoveArrayElement(actionMoveFrom, actionMoveTo);
+                }
+
+                if (actionSelectTargets)
+                {
+                    var objects = ReactiveLogicManager.Instance.ForEachReactive(reactive, actionSelectTarget).Select(r => r.gameObject).ToArray();
+                    if (objects.Length > 0)
+                    {
+                        EditorGUIUtility.PingObject(reactive.gameObject);
+                        Selection.objects = objects;
+                    }
                 }
 
                 position = HenryEditorGUI.rect;

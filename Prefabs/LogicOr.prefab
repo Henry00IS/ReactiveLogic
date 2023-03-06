@@ -1,0 +1,309 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4205294737743863776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4205294737743863779}
+  - component: {fileID: 4205294737743863778}
+  m_Layer: 0
+  m_Name: Branch1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4205294737743863779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294737743863776}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4205294738029426011}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4205294737743863778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294737743863776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a59a4865d11150145b91ef3335770a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _reactiveData:
+    outputs:
+    - name: True
+      targetName: Output
+      targetInput: SetValue
+      targetInputParameter: 1
+      delay: 0
+    - name: GroupSetValue1
+      targetName: '!self'
+      targetInput: SetValue
+      targetInputParameter: 
+      delay: 0
+    - name: GroupSetValueTest1
+      targetName: '!self'
+      targetInput: SetValue
+      targetInputParameter: 
+      delay: 0
+    - name: GroupSetValueTest1
+      targetName: '!group'
+      targetInput: Test
+      targetInputParameter: 
+      delay: 0
+  initialValue: 0
+--- !u!1 &4205294738029426009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4205294738029426011}
+  - component: {fileID: 4205294738029426008}
+  m_Layer: 0
+  m_Name: LogicOr
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4205294738029426011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738029426009}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4205294737743863779}
+  - {fileID: 4205294738962621535}
+  - {fileID: 4205294738762618936}
+  - {fileID: 4205294739409542625}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4205294738029426008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738029426009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b776982d1e4a3b343b94dca93f31244e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _reactiveData:
+    outputs: []
+--- !u!1 &4205294738762618937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4205294738762618936}
+  - component: {fileID: 4205294738762618939}
+  m_Layer: 0
+  m_Name: Input
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4205294738762618936
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738762618937}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4205294738029426011}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4205294738762618939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738762618937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438c7c5b479481b409f4ecc276efed8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _reactiveData:
+    outputs:
+    - name: GroupTest
+      targetName: Output
+      targetInput: SetValue
+      targetInputParameter: 0
+      delay: 0
+    - name: GroupTest
+      targetName: Branch1
+      targetInput: Test
+      targetInputParameter: 
+      delay: 0
+    - name: GroupTest
+      targetName: Branch2
+      targetInput: Test
+      targetInputParameter: 
+      delay: 0
+    - name: GroupTest
+      targetName: '!self'
+      targetInput: UserWaitForBranchesToUpdate
+      targetInputParameter: 
+      delay: 0
+    - name: UserWaitForBranchesToUpdate
+      targetName: Output
+      targetInput: Test
+      targetInputParameter: 
+      delay: 0
+--- !u!1 &4205294738962621532
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4205294738962621535}
+  - component: {fileID: 4205294738962621534}
+  m_Layer: 0
+  m_Name: Branch2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4205294738962621535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738962621532}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4205294738029426011}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4205294738962621534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294738962621532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a59a4865d11150145b91ef3335770a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _reactiveData:
+    outputs:
+    - name: True
+      targetName: Output
+      targetInput: SetValue
+      targetInputParameter: 1
+      delay: 0
+    - name: GroupSetValue2
+      targetName: '!self'
+      targetInput: SetValue
+      targetInputParameter: 
+      delay: 0
+    - name: GroupSetValueTest2
+      targetName: '!self'
+      targetInput: SetValue
+      targetInputParameter: 
+      delay: 0
+    - name: GroupSetValueTest2
+      targetName: '!group'
+      targetInput: Test
+      targetInputParameter: 
+      delay: 0
+  initialValue: 0
+--- !u!1 &4205294739409542654
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4205294739409542625}
+  - component: {fileID: 4205294739409542624}
+  m_Layer: 0
+  m_Name: Output
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4205294739409542625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294739409542654}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4205294738029426011}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4205294739409542624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4205294739409542654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a59a4865d11150145b91ef3335770a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _reactiveData:
+    outputs:
+    - name: True
+      targetName: '!group'
+      targetInput: GroupTrue
+      targetInputParameter: 
+      delay: 0
+    - name: False
+      targetName: '!group'
+      targetInput: GroupFalse
+      targetInputParameter: 
+      delay: 0
+  initialValue: 0
