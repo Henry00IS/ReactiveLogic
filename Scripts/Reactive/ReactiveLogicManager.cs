@@ -1,9 +1,6 @@
 using AlpacaIT.ReactiveLogic.Internal;
-using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AlpacaIT.ReactiveLogic
 {
@@ -45,14 +42,28 @@ namespace AlpacaIT.ReactiveLogic
         /// </summary>
         /// <param name="activator">The game object that caused this chain of events.</param>
         /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
-        /// <param name="target">The target name that yields one or more <see cref="IReactive"/> that will receive this input.</param>
+        /// <param name="target">
+        /// The target name that yields one or more <see cref="IReactive"/> that will receive this input.
+        /// </param>
         /// <param name="input">The target input name that will be invoked.</param>
-        /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
+        /// <param name="delay">
+        /// The delay in seconds to wait before invoking the input on the target. For unsafe
+        /// immediate execution that can crash the game when an infinite loop occurs, you can set
+        /// this value to -1.
+        /// </param>
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
         public void ScheduleInput(GameObject activator, IReactive caller, string target, string input, float delay, object parameter)
         {
             foreach (var reactive in ForEachReactive(caller, target))
-                links.AddLast(new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveParameter(parameter)));
+            {
+                var link = new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveParameter(parameter));
+
+                // allow for unsafe immediate execution when the delay is set the negative one.
+                if (delay == -1f)
+                    ProcessLink(link);
+                else
+                    links.AddLast(link);
+            }
         }
 
         /// <summary>
@@ -63,11 +74,21 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
         /// <param name="target">The <see cref="IReactive"/> that will receive this input.</param>
         /// <param name="input">The target input name that will be invoked.</param>
-        /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
+        /// <param name="delay">
+        /// The delay in seconds to wait before invoking the input on the target. For unsafe
+        /// immediate execution that can crash the game when an infinite loop occurs, you can set
+        /// this value to -1.
+        /// </param>
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
         public void ScheduleInput(GameObject activator, IReactive caller, IReactive target, string input, float delay, object parameter)
         {
-            links.AddLast(new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveParameter(parameter)));
+            var link = new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveParameter(parameter));
+
+            // allow for unsafe immediate execution when the delay is set the negative one.
+            if (delay == -1f)
+                ProcessLink(link);
+            else
+                links.AddLast(link);
         }
 
         /// <summary>
@@ -122,6 +143,33 @@ namespace AlpacaIT.ReactiveLogic
             reactive.reactiveData.group = parent ? parent.GetComponentInParent<LogicGroup>() : null;
         }
 
+        private void ProcessLink(ReactiveChainLink link)
+        {
+            // make sure the target component has not been destroyed.
+            if (link.target as UnityEngine.Object) // implicit Unity bool "exists" operator.
+            {
+                // The "Enable"-input always works.
+                if (link.targetInput == "Enable")
+                {
+                    link.target.reactiveData.enabled = true;
+                }
+                else if (link.target.reactiveData.enabled)
+                {
+                    // "Disable"-input.
+                    if (link.targetInput == "Disable")
+                        link.target.reactiveData.enabled = false;
+
+                    // "User"-inputs invoke the output handlers at the target reactive.
+                    else if (link.targetInputIsUserInput)
+                        link.target.OnReactiveOutput(link.activator, link.targetInput, link.targetParameter);
+
+                    // Invoke the input handler at the target reactive.
+                    else
+                        link.target.OnReactiveInput(link.ToReactiveInput());
+                }
+            }
+        }
+
         /// <summary>All of the logic gets executed once per fixed update.</summary>
         private void FixedUpdate()
         {
@@ -130,38 +178,17 @@ namespace AlpacaIT.ReactiveLogic
             while (node != null)
             {
                 var next = node.Next;
-                var chain = node.Value;
+                var link = node.Value;
 
                 // decrease the delay time remaining by delta time.
-                chain.delay -= Time.fixedDeltaTime;
-                if (chain.delay <= 0.0f)
+                link.delay -= Time.fixedDeltaTime;
+                if (link.delay <= 0.0f)
                 {
                     // remove the chain link before processing it.
                     links.Remove(node);
 
-                    // make sure the target component has not been destroyed.
-                    if (chain.target as UnityEngine.Object) // implicit Unity bool "exists" operator.
-                    {
-                        // The "Enable"-input always works.
-                        if (chain.targetInput == "Enable")
-                        {
-                            chain.target.reactiveData.enabled = true;
-                        }
-                        else if (chain.target.reactiveData.enabled)
-                        {
-                            // "Disable"-input.
-                            if (chain.targetInput == "Disable")
-                                chain.target.reactiveData.enabled = false;
-
-                            // "User"-inputs invoke the output handlers at the target reactive.
-                            else if (chain.targetInputIsUserInput)
-                                chain.target.OnReactiveOutput(chain.activator, chain.targetInput, chain.targetParameter);
-
-                            // Invoke the input handler at the target reactive.
-                            else
-                                chain.target.OnReactiveInput(chain.ToReactiveInput());
-                        }
-                    }
+                    // process the link.
+                    ProcessLink(link);
                 }
 
                 node = next;

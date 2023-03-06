@@ -23,6 +23,11 @@ namespace AlpacaIT.ReactiveLogic
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata();
 
+        /// <summary>Usage instructions for the group written by the level designer.</summary>
+        [Multiline(20)]
+        [Tooltip("Usage instructions for the group written by the level designer.")]
+        public string groupDescription = "";
+
         public void OnReactiveInput(ReactiveInput input)
         {
             // "Group"-inputs are treated as outputs without the "Group" prefix.

@@ -9,6 +9,10 @@ namespace AlpacaIT.ReactiveLogic.Editor
     {
         public override void OnInspectorGUI()
         {
+            var sReactiveData = serializedObject.FindProperty("_reactiveData");
+            EditorGUILayout.PropertyField(sReactiveData);
+            EditorGUILayout.Space(5f);
+
             EditorGUILayout.HelpBox("This makes it easy to communicate with a component that is not reactive, but it encourages visual programming, which is a bad idea. You essentially have code in the scene that tinkers around in C# and can cause serious bugs that are hard to trace and fix months from now. Use this component sparingly!", MessageType.Warning);
 
             var sParameterMode = serializedObject.FindProperty(nameof(LogicUnity.parameterMode));

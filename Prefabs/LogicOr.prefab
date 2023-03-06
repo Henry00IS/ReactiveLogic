@@ -49,22 +49,22 @@ MonoBehaviour:
       targetName: Output
       targetInput: SetValue
       targetInputParameter: 1
-      delay: 0
+      delay: -1
     - name: GroupSetValue1
       targetName: '!self'
       targetInput: SetValue
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupSetValueTest1
       targetName: '!self'
       targetInput: SetValue
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupSetValueTest1
       targetName: '!group'
       targetInput: Test
       targetInputParameter: 
-      delay: 0
+      delay: -1
   initialValue: 0
 --- !u!1 &4205294738029426009
 GameObject:
@@ -115,6 +115,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _reactiveData:
     outputs: []
+  groupDescription: 'The OR gate is a digital logic gate that implements logical
+    disjunction.
+
+    The group invokes True if either or both of its inputs are
+    1; otherwise it invokes False. The inputs are similar to LogicBranch (check wiki).
+
+
+    This
+    group has no internal execution delay and will invoke all output handlers immediately.'
 --- !u!1 &4205294738762618937
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,27 +173,22 @@ MonoBehaviour:
       targetName: Output
       targetInput: SetValue
       targetInputParameter: 0
-      delay: 0
+      delay: -1
     - name: GroupTest
       targetName: Branch1
       targetInput: Test
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupTest
       targetName: Branch2
       targetInput: Test
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupTest
-      targetName: '!self'
-      targetInput: UserWaitForBranchesToUpdate
-      targetInputParameter: 
-      delay: 0
-    - name: UserWaitForBranchesToUpdate
       targetName: Output
       targetInput: Test
       targetInputParameter: 
-      delay: 0
+      delay: -1
 --- !u!1 &4205294738962621532
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,22 +238,22 @@ MonoBehaviour:
       targetName: Output
       targetInput: SetValue
       targetInputParameter: 1
-      delay: 0
+      delay: -1
     - name: GroupSetValue2
       targetName: '!self'
       targetInput: SetValue
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupSetValueTest2
       targetName: '!self'
       targetInput: SetValue
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: GroupSetValueTest2
       targetName: '!group'
       targetInput: Test
       targetInputParameter: 
-      delay: 0
+      delay: -1
   initialValue: 0
 --- !u!1 &4205294739409542654
 GameObject:
@@ -300,10 +304,10 @@ MonoBehaviour:
       targetName: '!group'
       targetInput: GroupTrue
       targetInputParameter: 
-      delay: 0
+      delay: -1
     - name: False
       targetName: '!group'
       targetInput: GroupFalse
       targetInputParameter: 
-      delay: 0
+      delay: -1
   initialValue: 0
