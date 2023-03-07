@@ -36,6 +36,13 @@ namespace AlpacaIT.ReactiveLogic
         {
             if (input.name == "Filter")
             {
+                // make sure the activator is still valid before accessing it.
+                if (!input.activator)
+                {
+                    OnFilterRejected(input);
+                    return;
+                }
+
                 var targetNameMatcher = ReactiveLogicManager.CreateTargetNameMatcher(matchActivatorName);
                 if (targetNameMatcher(input.activator.name))
                 {

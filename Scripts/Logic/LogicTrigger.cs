@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
@@ -22,8 +23,13 @@ namespace AlpacaIT.ReactiveLogic
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(
             new MetaInterface(MetaInterfaceType.Output, "Enter", "Invoked when a collider starts touching the trigger."),
-            new MetaInterface(MetaInterfaceType.Output, "Exit", "Invoked when a collider stops touching the trigger.")
+            new MetaInterface(MetaInterfaceType.Output, "Exit", "Invoked when a collider stops touching the trigger."),
+            new MetaInterface(MetaInterfaceType.Output, "Occupied", "Invoked when the trigger becomes occupied by colliders touching the trigger."),
+            new MetaInterface(MetaInterfaceType.Output, "Empty", "Invoked when all colliders stop touching the trigger.")
         );
+
+        /// <summary>The collection of colliders that are occupying the trigger.</summary>
+        private List<(GameObject gameObject, Collider collider)> occupants = new List<(GameObject gameObject, Collider collider)>();
 
         public void OnReactiveInput(ReactiveInput input)
         {
@@ -31,12 +37,45 @@ namespace AlpacaIT.ReactiveLogic
 
         private void OnTriggerEnter(Collider other)
         {
+            // keep track of the occupants inside of the trigger.
+            occupants.Add((other.gameObject, other));
+
             this.OnReactiveOutput(other.gameObject, "Enter");
+
+            if (occupants.Count == 1)
+                this.OnReactiveOutput(other.gameObject, "Occupied");
         }
 
         private void OnTriggerExit(Collider other)
         {
+            // keep track of the occupants inside of the trigger.
+            occupants.Remove((other.gameObject, other));
+
             this.OnReactiveOutput(other.gameObject, "Exit");
+
+            if (occupants.Count == 0)
+                this.OnReactiveOutput(other.gameObject, "Empty");
+        }
+
+        private void FixedUpdate()
+        {
+            // when an occupant gets deleted then OnTriggerExit is never called.
+            var occupantsCount = occupants.Count;
+            for (int i = occupantsCount; i-- > 0;)
+            {
+                var occupant = occupants[i];
+                if (!occupant.collider)
+                {
+                    // remove the occupant from the collection.
+                    occupants.RemoveAt(i);
+
+                    // yes this game object is probably destroyed but other logic can check for that.
+                    this.OnReactiveOutput(occupant.gameObject, "Exit");
+
+                    if (occupants.Count == 0)
+                        this.OnReactiveOutput(occupant.gameObject, "Empty");
+                }
+            }
         }
     }
 }
