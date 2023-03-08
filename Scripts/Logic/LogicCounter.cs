@@ -41,7 +41,11 @@ namespace AlpacaIT.ReactiveLogic
             new MetaInterface(MetaInterfaceType.Input, "Unfreeze", "Unfreezes the counter value so that it can be changed by inputs."),
             new MetaInterface(MetaInterfaceType.Input, "Invoke", "Invokes the output with the current value of the counter."),
 
-            new MetaInterface(MetaInterfaceType.Output, "Invoked", "Invoked when an operation on the current value of the counter finished.", "amount", MetaParameterType.Float, "The current value of the counter.")
+            new MetaInterface(MetaInterfaceType.Output, "Invoked", "Invoked when an operation on the current value of the counter finished.", "amount", MetaParameterType.Float, "The current value of the counter."),
+            new MetaInterface(MetaInterfaceType.Output, "ReachedMin", "Invoked when clamping is active and the counter reached the minimum value.", "amount", MetaParameterType.Float, "The current value of the counter (always the minimum value)."),
+            new MetaInterface(MetaInterfaceType.Output, "ReachedMax", "Invoked when clamping is active and the counter reached the maximum value.", "amount", MetaParameterType.Float, "The current value of the counter (always the maximum value)."),
+            new MetaInterface(MetaInterfaceType.Output, "ChangedFromMin", "Invoked when clamping is active and the counter changed from the minimum value.", "amount", MetaParameterType.Float, "The current value of the counter."),
+            new MetaInterface(MetaInterfaceType.Output, "ChangedFromMax", "Invoked when clamping is active and the counter changed from the maximum value.", "amount", MetaParameterType.Float, "The current value of the counter.")
         );
 
         /// <summary>
@@ -73,6 +77,21 @@ namespace AlpacaIT.ReactiveLogic
         public bool frozen = false;
 
         /// <summary>
+        /// Gets whether the counter is currently clamping the value because <see cref="clampMin"/>
+        /// and <see cref="clampMax"/> or not both set to zero.
+        /// </summary>
+        public bool isClamping => (clampMin != 0f || clampMax != 0f);
+
+        /// <summary>Used to invoke the ReachedMin output.</summary>
+        private bool onReachedMin = false;
+        /// <summary>Used to invoke the ReachedMax output.</summary>
+        private bool onReachedMax = false;
+        /// <summary>Used to invoke the ChangedFromMin output.</summary>
+        private bool onChangedFromMin = false;
+        /// <summary>Used to invoke the ChangedFromMax output.</summary>
+        private bool onChangedFromMax = false;
+
+        /// <summary>
         /// Sets and processes the <see cref="currentValue"/> to ensure it meets all criteria of the
         /// counter such as clamping or freezing the value.
         /// </summary>
@@ -82,13 +101,28 @@ namespace AlpacaIT.ReactiveLogic
             // if the counter value has been frozen we do nothing.
             if (frozen) return;
 
+            // remember the previous value.
+            var previousValue = currentValue;
+
             // set the current value to the number.
             currentValue = number;
 
             // we now perform clamping on the current value.
-            if (clampMin != 0f || clampMax != 0f)
+            if (isClamping)
             {
                 currentValue = Mathf.Clamp(currentValue, clampMin, clampMax);
+
+                // check whether we reached the minimum value.
+                onReachedMin = (previousValue != clampMin && currentValue == clampMin);
+
+                // check whether we reached the maximum value.
+                onReachedMax = (previousValue != clampMax && currentValue == clampMax);
+
+                // check whether we changed from the minimum value.
+                onChangedFromMin = (previousValue == clampMin && currentValue != clampMin);
+
+                // check whether we changed from the maximum value.
+                onChangedFromMax = (previousValue == clampMax && currentValue != clampMax);
             }
         }
 
@@ -118,6 +152,12 @@ namespace AlpacaIT.ReactiveLogic
                 case "Unfreeze": frozen = false; SetCurrentValue(currentValue); break;
                 case "Invoke": SetCurrentValue(currentValue); InvokeOutput(input); break; // force a set for current value unity editor inspector changes.
             }
+
+            // invoke the scheduled outputs detected while setting the current value.
+            if (onReachedMin) { onReachedMin = false; this.OnReactiveOutput(input.activator, "ReachedMin", currentValue); }
+            if (onReachedMax) { onReachedMax = false; this.OnReactiveOutput(input.activator, "ReachedMax", currentValue); }
+            if (onChangedFromMin) { onChangedFromMin = false; this.OnReactiveOutput(input.activator, "ChangedFromMin", currentValue); }
+            if (onChangedFromMax) { onChangedFromMax = false; this.OnReactiveOutput(input.activator, "ChangedFromMax", currentValue); }
         }
 
         private void InvokeOutput(ReactiveInput input)
