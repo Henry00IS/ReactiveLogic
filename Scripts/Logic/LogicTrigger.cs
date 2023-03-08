@@ -40,10 +40,10 @@ namespace AlpacaIT.ReactiveLogic
             // keep track of the occupants inside of the trigger.
             occupants.Add((other.gameObject, other));
 
-            this.OnReactiveOutput(other.gameObject, "Enter");
+            this.OnReactiveOutput(new ReactiveObject(other.gameObject), "Enter");
 
             if (occupants.Count == 1)
-                this.OnReactiveOutput(other.gameObject, "Occupied");
+                this.OnReactiveOutput(new ReactiveObject(other.gameObject), "Occupied");
         }
 
         private void OnTriggerExit(Collider other)
@@ -51,10 +51,10 @@ namespace AlpacaIT.ReactiveLogic
             // keep track of the occupants inside of the trigger.
             occupants.Remove((other.gameObject, other));
 
-            this.OnReactiveOutput(other.gameObject, "Exit");
+            this.OnReactiveOutput(new ReactiveObject(other.gameObject), "Exit");
 
             if (occupants.Count == 0)
-                this.OnReactiveOutput(other.gameObject, "Empty");
+                this.OnReactiveOutput(new ReactiveObject(other.gameObject), "Empty");
         }
 
         private void FixedUpdate()
@@ -70,10 +70,10 @@ namespace AlpacaIT.ReactiveLogic
                     occupants.RemoveAt(i);
 
                     // yes this game object is probably destroyed but other logic can check for that.
-                    this.OnReactiveOutput(occupant.gameObject, "Exit");
+                    this.OnReactiveOutput(new ReactiveObject(occupant.gameObject), "Exit");
 
                     if (occupants.Count == 0)
-                        this.OnReactiveOutput(occupant.gameObject, "Empty");
+                        this.OnReactiveOutput(new ReactiveObject(occupant.gameObject), "Empty");
                 }
             }
         }

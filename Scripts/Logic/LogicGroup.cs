@@ -33,7 +33,7 @@ namespace AlpacaIT.ReactiveLogic
             // "Group"-inputs are treated as outputs without the "Group" prefix.
             if (input.name.StartsWith("Group"))
             {
-                this.OnReactiveOutput(input.activator, input.name.Substring(5), input.parameter);
+                this.OnReactiveOutput(input, input.name.Substring(5), input.parameter);
             }
             // every input is treated as a broadcast with an added "Group" prefix.
             else
@@ -42,7 +42,7 @@ namespace AlpacaIT.ReactiveLogic
                 foreach (var reactive in manager.ForEachReactiveInGroup(this))
                 {
                     if (reactive is LogicGroup) continue; // ignore groups in groups.
-                    reactive.OnReactiveOutput(input.activator, "Group" + input.name, input.parameter);
+                    reactive.OnReactiveOutput(input, "Group" + input.name, input.parameter);
                 }
             }
         }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
@@ -36,13 +35,6 @@ namespace AlpacaIT.ReactiveLogic
         {
             if (input.name == "Filter")
             {
-                // make sure the activator is still valid before accessing it.
-                if (!input.activator)
-                {
-                    OnFilterRejected(input);
-                    return;
-                }
-
                 var targetNameMatcher = ReactiveLogicManager.CreateTargetNameMatcher(matchActivatorName);
                 if (targetNameMatcher(input.activator.name))
                 {
@@ -57,12 +49,12 @@ namespace AlpacaIT.ReactiveLogic
 
         private void OnFilterRejected(ReactiveInput input)
         {
-            this.OnReactiveOutput(input.activator, "Rejected", input.parameter);
+            this.OnReactiveOutput(input, "Rejected", input.parameter);
         }
 
         private void OnFilterPassed(ReactiveInput input)
         {
-            this.OnReactiveOutput(input.activator, "Passed", input.parameter);
+            this.OnReactiveOutput(input, "Passed", input.parameter);
         }
     }
 }

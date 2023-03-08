@@ -80,11 +80,11 @@ namespace AlpacaIT.ReactiveLogic
         {
             if (currentValue)
             {
-                this.OnReactiveOutput(input.activator, "True", input.parameter);
+                this.OnReactiveOutput(input, "True", input.parameter);
             }
             else
             {
-                this.OnReactiveOutput(input.activator, "False", input.parameter);
+                this.OnReactiveOutput(input, "False", input.parameter);
             }
         }
     }

@@ -26,7 +26,7 @@ namespace AlpacaIT.ReactiveLogic
         private void Start()
         {
             // logic auto begins a new chain of events and is the activator.
-            this.OnReactiveOutput(gameObject, "Start");
+            this.OnReactiveOutput(new ReactiveObject(gameObject), "Start");
         }
 
         public void OnReactiveInput(ReactiveInput input)

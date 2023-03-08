@@ -52,18 +52,10 @@ namespace AlpacaIT.ReactiveLogic
         /// this value to -1.
         /// </param>
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
-        public void ScheduleInput(GameObject activator, IReactive caller, string target, string input, float delay, object parameter)
+        public void ScheduleInput(ReactiveObject activator, IReactive caller, string target, string input, float delay, object parameter)
         {
             foreach (var reactive in ForEachReactive(caller, target))
-            {
-                var link = new ReactiveChainLink(activator, caller, reactive, input, delay, new ReactiveParameter(parameter));
-
-                // allow for unsafe immediate execution when the delay is set the negative one.
-                if (delay == -1f)
-                    ProcessLink(link);
-                else
-                    links.AddLast(link);
-            }
+                ScheduleInput(activator, caller, reactive, input, delay, parameter);
         }
 
         /// <summary>
@@ -80,7 +72,7 @@ namespace AlpacaIT.ReactiveLogic
         /// this value to -1.
         /// </param>
         /// <param name="parameter">The parameter that will be passed to the input of the target.</param>
-        public void ScheduleInput(GameObject activator, IReactive caller, IReactive target, string input, float delay, object parameter)
+        public void ScheduleInput(ReactiveObject activator, IReactive caller, IReactive target, string input, float delay, object parameter)
         {
             var link = new ReactiveChainLink(activator, caller, target, input, delay, new ReactiveParameter(parameter));
 

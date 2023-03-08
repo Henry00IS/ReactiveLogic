@@ -19,6 +19,7 @@ namespace AlpacaIT.ReactiveLogic
             Integer,
             Float,
             String,
+            Activator,
         }
 
         #region Required IReactive Implementation
@@ -59,6 +60,9 @@ namespace AlpacaIT.ReactiveLogic
         [Space]
         public UnityEvent<string> unityEventString;
 
+        [Space]
+        public UnityEvent<GameObject> unityEventActivator;
+
         public void OnReactiveInput(ReactiveInput input)
         {
             if (input.name == "Invoke")
@@ -83,6 +87,10 @@ namespace AlpacaIT.ReactiveLogic
 
                     case ParameterMode.String:
                         unityEventString?.Invoke(input.parameter.GetString());
+                        break;
+
+                    case ParameterMode.Activator:
+                        unityEventActivator?.Invoke(input.activator.instance);
                         break;
                 }
             }

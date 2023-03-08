@@ -7,7 +7,8 @@ namespace AlpacaIT.ReactiveLogic
     {
         /// <summary>
         /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
-        /// specified output <paramref name="name"/>.
+        /// specified output <paramref name="name"/>. This method is intended to start a new chain
+        /// of events.
         /// <para>
         /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
         /// </para>
@@ -19,7 +20,7 @@ namespace AlpacaIT.ReactiveLogic
         /// caused/activated it and not the button itself.
         /// </param>
         /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
-        public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name)
+        public static void OnReactiveOutput(this IReactive reactive, ReactiveObject activator, string name)
         {
             if (!reactive.reactiveData.enabled) return;
 
@@ -36,7 +37,8 @@ namespace AlpacaIT.ReactiveLogic
 
         /// <summary>
         /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
-        /// specified output <paramref name="name"/>.
+        /// specified output <paramref name="name"/>. This method is intended to start a new chain
+        /// of events.
         /// <para>
         /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
         /// </para>
@@ -52,7 +54,7 @@ namespace AlpacaIT.ReactiveLogic
         /// The parameter to be passed to the next input. This may be overridden by the level
         /// designer when they put a custom parameter into the output handler.
         /// </param>
-        public static void OnReactiveOutput(this IReactive reactive, GameObject activator, string name, object parameter)
+        public static void OnReactiveOutput(this IReactive reactive, ReactiveObject activator, string name, object parameter)
         {
             if (!reactive.reactiveData.enabled) return;
 
@@ -70,6 +72,54 @@ namespace AlpacaIT.ReactiveLogic
                 if (output.name == name)
                     ReactiveLogicManager.Instance.ScheduleInput(activator, reactive, output.targetName, output.targetInput, output.delay, outputParameter);
             }
+        }
+
+        /// <summary>
+        /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
+        /// specified output <paramref name="name"/>. This method is intended to continue an
+        /// existing chain of events.
+        /// <para>
+        /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
+        /// </para>
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
+        /// <param name="activator">
+        /// The current <see cref="ReactiveInput"/> to take the <see
+        /// cref="ReactiveInput.activator"/> from (a shorthand to not have to type input.activator
+        /// every time). The game object that caused the current chain of events. This could for
+        /// example be a physics object that fell onto a button. It would be the physics object that
+        /// caused/activated it and not the button itself.
+        /// </param>
+        /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
+        public static void OnReactiveOutput(this IReactive reactive, ReactiveInput activator, string name)
+        {
+            OnReactiveOutput(reactive, activator.activator, name);
+        }
+
+        /// <summary>
+        /// Invokes user-configured output handlers on the <see cref="IReactive"/> matching the
+        /// specified output <paramref name="name"/>. This method is intended to continue an
+        /// existing chain of events.
+        /// <para>
+        /// If the <paramref name="reactive"/> is not enabled then this function won't have any effect.
+        /// </para>
+        /// </summary>
+        /// <param name="reactive">The <see cref="IReactive"/> whose output handlers will be invoked.</param>
+        /// <param name="activator">
+        /// The current <see cref="ReactiveInput"/> to take the <see
+        /// cref="ReactiveInput.activator"/> from (a shorthand to not have to type input.activator
+        /// every time). The game object that caused the current chain of events. This could for
+        /// example be a physics object that fell onto a button. It would be the physics object that
+        /// caused/activated it and not the button itself.
+        /// </param>
+        /// <param name="name">The output name to be invoked on the <see cref="IReactive"/>.</param>
+        /// <param name="parameter">
+        /// The parameter to be passed to the next input. This may be overridden by the level
+        /// designer when they put a custom parameter into the output handler.
+        /// </param>
+        public static void OnReactiveOutput(this IReactive reactive, ReactiveInput activator, string name, object parameter)
+        {
+            OnReactiveOutput(reactive, activator.activator, name, parameter);
         }
 
         /// <summary>

@@ -154,15 +154,15 @@ namespace AlpacaIT.ReactiveLogic
             }
 
             // invoke the scheduled outputs detected while setting the current value.
-            if (onReachedMin) { onReachedMin = false; this.OnReactiveOutput(input.activator, "ReachedMin", currentValue); }
-            if (onReachedMax) { onReachedMax = false; this.OnReactiveOutput(input.activator, "ReachedMax", currentValue); }
-            if (onChangedFromMin) { onChangedFromMin = false; this.OnReactiveOutput(input.activator, "ChangedFromMin", currentValue); }
-            if (onChangedFromMax) { onChangedFromMax = false; this.OnReactiveOutput(input.activator, "ChangedFromMax", currentValue); }
+            if (onReachedMin) { onReachedMin = false; this.OnReactiveOutput(input, "ReachedMin", currentValue); }
+            if (onReachedMax) { onReachedMax = false; this.OnReactiveOutput(input, "ReachedMax", currentValue); }
+            if (onChangedFromMin) { onChangedFromMin = false; this.OnReactiveOutput(input, "ChangedFromMin", currentValue); }
+            if (onChangedFromMax) { onChangedFromMax = false; this.OnReactiveOutput(input, "ChangedFromMax", currentValue); }
         }
 
         private void InvokeOutput(ReactiveInput input)
         {
-            this.OnReactiveOutput(input.activator, "Invoked", currentValue);
+            this.OnReactiveOutput(input, "Invoked", currentValue);
         }
     }
 }

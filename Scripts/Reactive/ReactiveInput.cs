@@ -16,7 +16,7 @@ namespace AlpacaIT.ReactiveLogic
         /// <param name="caller">The <see cref="IReactive"/> that invoked this input.</param>
         /// <param name="name">The name of this input that got triggered.</param>
         /// <param name="parameter">The parameter to be passed into this input.</param>
-        public ReactiveInput(GameObject activator, IReactive caller, string name, ReactiveParameter parameter)
+        public ReactiveInput(ReactiveObject activator, IReactive caller, string name, ReactiveParameter parameter)
         {
             this.activator = activator;
             this.caller = caller;
@@ -29,7 +29,7 @@ namespace AlpacaIT.ReactiveLogic
         /// physics object that fell onto a button. It would be the physics object that
         /// caused/activated it and not the button itself.
         /// </summary>
-        public GameObject activator { get; }
+        public ReactiveObject activator { get; }
 
         /// <summary>The <see cref="IReactive"/> that invoked this input.</summary>
         public IReactive caller { get; }

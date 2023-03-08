@@ -15,7 +15,7 @@ namespace AlpacaIT.ReactiveLogic.Internal
         /// <param name="targetInput">The target input name that will be invoked.</param>
         /// <param name="delay">The delay in seconds to wait before invoking the input on the target.</param>
         /// <param name="targetParameter">The parameter that will be passed to the input of the target.</param>
-        public ReactiveChainLink(GameObject activator, IReactive caller, IReactive target, string targetInput, float delay, ReactiveParameter targetParameter)
+        public ReactiveChainLink(ReactiveObject activator, IReactive caller, IReactive target, string targetInput, float delay, ReactiveParameter targetParameter)
         {
             this.activator = activator;
             this.caller = caller;
@@ -30,7 +30,7 @@ namespace AlpacaIT.ReactiveLogic.Internal
         /// physics object that fell onto a button. It would be the physics object that
         /// caused/activated it and not the button itself.
         /// </summary>
-        public GameObject activator { get; }
+        public ReactiveObject activator { get; }
 
         /// <summary>The <see cref="IReactive"/> that invoked this input.</summary>
         public IReactive caller { get; }

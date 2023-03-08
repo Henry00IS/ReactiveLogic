@@ -30,7 +30,7 @@ namespace AlpacaIT.ReactiveLogic
         {
             if (input.name == "Invoke")
             {
-                this.OnReactiveOutput(input.activator, "Invoked", input.parameter);
+                this.OnReactiveOutput(input, "Invoked", input.parameter);
             }
         }
     }

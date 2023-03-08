@@ -21,6 +21,7 @@ namespace AlpacaIT.ReactiveLogic.Editor
             var sUnityEventInteger = serializedObject.FindProperty(nameof(LogicUnity.unityEventInteger));
             var sUnityEventFloat = serializedObject.FindProperty(nameof(LogicUnity.unityEventFloat));
             var sUnityEventString = serializedObject.FindProperty(nameof(LogicUnity.unityEventString));
+            var sUnityEventActivator = serializedObject.FindProperty(nameof(LogicUnity.unityEventActivator));
 
             EditorGUILayout.PropertyField(sParameterMode);
 
@@ -44,6 +45,10 @@ namespace AlpacaIT.ReactiveLogic.Editor
 
                 case LogicUnity.ParameterMode.String:
                     EditorGUILayout.PropertyField(sUnityEventString);
+                    break;
+
+                case LogicUnity.ParameterMode.Activator:
+                    EditorGUILayout.PropertyField(sUnityEventActivator);
                     break;
             }
 
