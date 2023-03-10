@@ -21,6 +21,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicBranch>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Compare", false)]
+        private static void CreateMenuLogicCompare()
+        {
+            var go = EditorCreateGameObject("Logic Compare");
+            go.AddComponent<LogicCompare>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Counter", false)]
         private static void CreateMenuLogicCounter()
         {
@@ -54,6 +61,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
         {
             var go = EditorCreateGameObject("Logic Relay");
             go.AddComponent<LogicRelay>();
+        }
+
+        [MenuItem("GameObject/Reactive/Logic Timer", false)]
+        private static void CreateMenuLogicTimer()
+        {
+            var go = EditorCreateGameObject("Logic Timer");
+            go.AddComponent<LogicTimer>();
         }
 
         [MenuItem("GameObject/Reactive/Logic Trigger", false)]

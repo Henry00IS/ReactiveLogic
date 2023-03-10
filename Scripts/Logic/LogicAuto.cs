@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace AlpacaIT.ReactiveLogic
 {
-    /// <summary>An <see cref="IReactive"/> that can invoke an input on scene start.</summary>
+    /// <summary>An <see cref="IReactive"/> that can invoke an output on scene start.</summary>
     public class LogicAuto : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation
@@ -19,7 +19,7 @@ namespace AlpacaIT.ReactiveLogic
         #endregion Required IReactive Implementation
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(
-            new MetaInterface(MetaInterfaceType.Output, "Start", "Automatically called before the first frame update.")
+            new MetaInterface(MetaInterfaceType.Output, "Start", "Automatically invoked before the first frame update.")
         );
 
         /// <summary>Start is called before the first frame update.</summary>
