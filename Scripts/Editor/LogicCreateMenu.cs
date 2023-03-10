@@ -35,6 +35,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicCounter>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Destroy", false)]
+        private static void CreateMenuLogicDestroy()
+        {
+            var go = EditorCreateGameObject("Logic Destroy");
+            go.AddComponent<LogicDestroy>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Filter", false)]
         private static void CreateMenuLogicFilter()
         {
