@@ -21,7 +21,7 @@ namespace AlpacaIT.ReactiveLogic
 
         private static ReactiveMetadata _reactiveMeta = new ReactiveMetadata(
             new MetaInterface(MetaInterfaceType.Input, "DestroyActivator", "Destroys the game object that caused the current chain of events."),
-            new MetaInterface(MetaInterfaceType.Input, "DestroyTarget", "Searches for targets by the string parameter and destroys the associated game objects.")
+            new MetaInterface(MetaInterfaceType.Input, "DestroyTarget", "Searches for targets by the string parameter and destroys the associated game objects.", "target", MetaParameterType.String, "The reactive target to search for.")
         );
 
         public void OnReactiveInput(ReactiveInput input)
