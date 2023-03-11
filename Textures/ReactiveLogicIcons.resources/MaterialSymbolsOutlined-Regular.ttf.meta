@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5488340876a1d09489ad6ba91442a814
+guid: 4f236b1cd83d2d24da00b435f2a51679
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Material Icons Outlined
+  - Material Symbols Outlined
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

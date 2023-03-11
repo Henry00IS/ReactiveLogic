@@ -63,6 +63,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicGroup>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Instantiate", false)]
+        private static void CreateMenuLogicInstantiate()
+        {
+            var go = EditorCreateGameObject("Logic Instantiate");
+            go.AddComponent<LogicInstantiate>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Log", false)]
         private static void CreateMenuLogicLog()
         {
