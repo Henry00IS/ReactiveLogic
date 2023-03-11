@@ -4,6 +4,7 @@ using UnityEngine.Events;
 namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>An <see cref="IReactive"/> that destroys game objects in the scene.</summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Destroy")]
     public class LogicDestroy : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

@@ -3,6 +3,7 @@ using UnityEngine;
 namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>An <see cref="IReactive"/> that can branch between two outputs.</summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Branch")]
     public class LogicBranch : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

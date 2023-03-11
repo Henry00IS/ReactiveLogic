@@ -21,6 +21,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicBranch>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Case", false)]
+        private static void CreateMenuLogicCase()
+        {
+            var go = EditorCreateGameObject("Logic Case");
+            go.AddComponent<LogicCase>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Compare", false)]
         private static void CreateMenuLogicCompare()
         {

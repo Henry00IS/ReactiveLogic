@@ -6,6 +6,7 @@ namespace AlpacaIT.ReactiveLogic
     /// <summary>
     /// An <see cref="IReactive"/> that invokes an output whenever colliders enter or exit a trigger.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Trigger")]
     public class LogicTrigger : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

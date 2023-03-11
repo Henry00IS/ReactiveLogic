@@ -3,6 +3,7 @@
 namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>An <see cref="IReactive"/> that invokes an output at regular intervals.</summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Timer")]
     public class LogicTimer : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

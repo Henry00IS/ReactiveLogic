@@ -6,6 +6,7 @@ namespace AlpacaIT.ReactiveLogic
     /// An <see cref="IReactive"/> that groups together multiple <see cref="IReactive"/>. The
     /// grouped <see cref="IReactive"/> target only each other and not global names outside of the group.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Group")]
     public class LogicGroup : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

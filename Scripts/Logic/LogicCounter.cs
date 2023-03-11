@@ -5,6 +5,7 @@ namespace AlpacaIT.ReactiveLogic
     /// <summary>
     /// An <see cref="IReactive"/> that stores, manipulates and outputs a numerical value.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Counter")]
     public class LogicCounter : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

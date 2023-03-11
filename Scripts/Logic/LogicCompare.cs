@@ -6,6 +6,7 @@ namespace AlpacaIT.ReactiveLogic
     /// An <see cref="IReactive"/> that compares two numbers and invokes an output depending on
     /// their relationship.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Compare")]
     public class LogicCompare : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

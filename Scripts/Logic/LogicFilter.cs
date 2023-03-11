@@ -6,6 +6,7 @@ namespace AlpacaIT.ReactiveLogic
     /// Represents an <see cref="IReactive"/> that passes through an invoked input if the activator
     /// passes a filter.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Filter")]
     public class LogicFilter : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

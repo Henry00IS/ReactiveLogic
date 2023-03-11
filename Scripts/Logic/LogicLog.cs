@@ -4,6 +4,7 @@ using UnityEngine;
 namespace AlpacaIT.ReactiveLogic
 {
     /// <summary>An <see cref="IReactive"/> that can log messages to the Unity console.</summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Log")]
     public class LogicLog : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

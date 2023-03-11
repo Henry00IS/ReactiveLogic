@@ -6,6 +6,7 @@ namespace AlpacaIT.ReactiveLogic
     /// An <see cref="IReactive"/> that passes through an invoked input. The relay makes it easy to
     /// invoke multiple targets with a single input. This is very helpful for organization.
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Relay")]
     public class LogicRelay : MonoBehaviour, IReactive
     {
         #region Required IReactive Implementation

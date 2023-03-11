@@ -10,6 +10,7 @@ namespace AlpacaIT.ReactiveLogic
     /// in C# and can cause serious bugs that are hard to trace and fix months from now. Use this
     /// component sparingly!
     /// </summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Logic-Unity")]
     public class LogicUnity : MonoBehaviour, IReactive
     {
         public enum ParameterMode
