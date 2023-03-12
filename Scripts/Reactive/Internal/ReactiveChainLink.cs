@@ -50,6 +50,11 @@ namespace AlpacaIT.ReactiveLogic.Internal
         public float delay { get; set; }
 
         /// <summary>
+        /// Gets or sets whether this link has been canceled and should not be processed.
+        /// </summary>
+        public bool canceled { get; set; }
+
+        /// <summary>
         /// Gets whether the <see cref="targetInput"/> starts with "User" and should invoke an
         /// output at the target <see cref="IReactive"/> with the same name, instead of calling the
         /// <see cref="IReactive.OnReactiveInput"/> method.

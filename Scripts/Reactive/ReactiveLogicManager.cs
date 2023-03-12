@@ -135,8 +135,28 @@ namespace AlpacaIT.ReactiveLogic
             reactive.reactiveData.group = parent ? parent.GetComponentInParent<LogicGroup>() : null;
         }
 
+        private void CancelLinks(IReactive target)
+        {
+            // iterate over all of the active links.
+            var node = links.First;
+            while (node != null)
+            {
+                var next = node.Next;
+                var link = node.Value;
+
+                // cancel links where the caller is the target:
+                if (link.caller == target)
+                    link.canceled = true;
+
+                node = next;
+            }
+        }
+
         private void ProcessLink(ReactiveChainLink link)
         {
+            // make sure the link has not been canceled.
+            if (link.canceled) return;
+
             // make sure the target component has not been destroyed.
             if (link.target as UnityEngine.Object) // implicit Unity bool "exists" operator.
             {
@@ -144,6 +164,12 @@ namespace AlpacaIT.ReactiveLogic
                 if (link.targetInput == "Enable")
                 {
                     link.target.reactiveData.enabled = true;
+                }
+                // The "Cancel"-input always works.
+                else if (link.targetInput == "Cancel")
+                {
+                    // cancel all active links of the target.
+                    CancelLinks(link.target);
                 }
                 else if (link.target.reactiveData.enabled)
                 {

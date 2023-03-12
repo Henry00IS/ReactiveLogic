@@ -20,6 +20,7 @@ namespace AlpacaIT.ReactiveLogic
         {
             yield return new MetaInterface(MetaInterfaceType.Input, "Enable", "Enables the reactive logic component allowing it to receive inputs and invoke outputs.");
             yield return new MetaInterface(MetaInterfaceType.Input, "Disable", "Disables the reactive logic component so that it can't receive inputs nor invoke outputs.");
+            yield return new MetaInterface(MetaInterfaceType.Input, "Cancel", "Cancels all delayed pending outputs on the reactive logic component.");
 
             foreach (var iface in interfaces)
                 if (iface.type == MetaInterfaceType.Input)
