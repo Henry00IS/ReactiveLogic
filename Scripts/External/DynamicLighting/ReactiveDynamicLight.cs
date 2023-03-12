@@ -43,15 +43,18 @@ namespace AlpacaIT.ReactiveLogic.External.DynamicLighting
         /// <summary>
         /// Whether the light is enabled (full intensity) or disabled (zero intensity) upon scene start.
         /// </summary>
-        public bool lightStartEnabled = true;
+        [Tooltip("Whether the light is enabled (full intensity) or disabled (zero intensity) upon scene start.")]
+        public bool startEnabled = true;
 
         /// <summary>The amount of time in takes in seconds for the light to fade in fully.</summary>
+        [Tooltip("The amount of time in takes in seconds for the light to fade in fully.")]
         [Min(0f)]
-        public float lightFadeInTime = 0.1f;
+        public float fadeInTime = 0.1f;
 
         /// <summary>The amount of time in takes in seconds for the light to fade out fully.</summary>
+        [Tooltip("The amount of time in takes in seconds for the light to fade out fully.")]
         [Min(0f)]
-        public float lightFadeOutTime = 0.1f;
+        public float fadeOutTime = 0.1f;
 
         /// <summary>The <see cref="DynamicLight"/> source that this component is controlling.</summary>
         private DynamicLight dynamicLight;
@@ -70,7 +73,7 @@ namespace AlpacaIT.ReactiveLogic.External.DynamicLighting
             initialLightIntensity = dynamicLight.lightIntensity;
 
             // disable the light on scene start if so desired.
-            if (!lightStartEnabled)
+            if (!startEnabled)
             {
                 dynamicLight.lightIntensity = 0.0f;
             }
@@ -85,17 +88,17 @@ namespace AlpacaIT.ReactiveLogic.External.DynamicLighting
             switch (input.name)
             {
                 case "EnableLight":
-                    fadeLinear.Open(lightFadeInTime);
+                    fadeLinear.Open(fadeInTime);
                     TryStartReactiveCoroutine();
                     break;
 
                 case "DisableLight":
-                    fadeLinear.Close(lightFadeOutTime);
+                    fadeLinear.Close(fadeOutTime);
                     TryStartReactiveCoroutine();
                     break;
 
                 case "ToggleLight":
-                    fadeLinear.Reverse(lightFadeInTime, lightFadeOutTime);
+                    fadeLinear.Reverse(fadeInTime, fadeOutTime);
                     TryStartReactiveCoroutine();
                     break;
             }
