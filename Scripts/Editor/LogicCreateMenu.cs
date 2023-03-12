@@ -105,6 +105,17 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicUnity>();
         }
 
+#if ALPACAIT_DYNAMICLIGHTING
+
+        [MenuItem("GameObject/Reactive/Reactive Dynamic Light", false)]
+        private static void CreateMenuExternalDynamicLightingReactiveDynamicLight()
+        {
+            var go = EditorCreateGameObject("Reactive Dynamic Light");
+            go.AddComponent<External.DynamicLighting.ReactiveDynamicLight>();
+        }
+
+#endif
+
         /// <summary>Adds a new game object to the scene.</summary>
         /// <param name="name">The name of the game object that will be created.</param>
         /// <returns>The game object that has been added to the scene.</returns>
