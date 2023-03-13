@@ -34,6 +34,10 @@ namespace AlpacaIT.ReactiveLogic
             new MetaInterface(MetaInterfaceType.Output, "DepartedFromTarget2", "Invoked when the linear movement departed from target 2.")
         );
 
+        /// <summary>Whether the linear motion is already fully open upon scene start.</summary>
+        [Tooltip("Whether the linear motion is already fully open upon scene start.")]
+        public bool startOpened = false;
+
         /// <summary>The target point that the movement begins at.</summary>
         [Tooltip("The target point that the movement begins at.")]
         public Transform target1;
@@ -59,6 +63,9 @@ namespace AlpacaIT.ReactiveLogic
         private void Awake()
         {
             detectedRigidbody = GetComponent<Rigidbody>();
+
+            if (startOpened)
+                linear.OpenImmediately();
         }
 
         public void OnReactiveInput(ReactiveInput input)
