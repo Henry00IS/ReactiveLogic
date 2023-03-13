@@ -77,6 +77,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicLog>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Move Linear", false)]
+        private static void CreateMenuLogicMoveLinear()
+        {
+            var go = EditorCreateGameObject("Logic Move Linear");
+            go.AddComponent<LogicMoveLinear>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Relay", false)]
         private static void CreateMenuLogicRelay()
         {

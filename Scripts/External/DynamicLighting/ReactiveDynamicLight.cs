@@ -18,6 +18,7 @@ namespace AlpacaIT.ReactiveLogic.External.DynamicLighting
     // clear why your own c# code may not work as expected "ah, this component is also changing values".
 
     /// <summary>An <see cref="IReactive"/> that provides the ability to control a <see cref="DynamicLight"/>.</summary>
+    [HelpURL("https://github.com/Henry00IS/ReactiveLogic/wiki/Reactive-Dynamic-Light")]
     [RequireComponent(typeof(DynamicLight))]
     public class ReactiveDynamicLight : MonoBehaviour, IReactive
     {

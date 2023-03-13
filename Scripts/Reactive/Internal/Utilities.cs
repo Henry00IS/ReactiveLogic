@@ -183,26 +183,31 @@ namespace AlpacaIT.ReactiveLogic.Internal
             /// <param name="time">The time in seconds the full linear motion from 0 to 1 would take.</param>
             public void Open(float time)
             {
-                time = Mathf.Abs(time);
-
                 forwards = true;
-                if (time == 0f)
-                    speed = 0f; // handled in update.
-                else
-                    speed = 1f / time;
+                SetTime(time);
             }
 
             /// <summary>Move towards the beginning of the linear motion with negative speed.</summary>
             /// <param name="time">The time in seconds the full linear motion from 1 to 0 would take.</param>
             public void Close(float time)
             {
-                time = Mathf.Abs(time);
-
                 forwards = false;
+                SetTime(time);
+            }
+
+            /// <summary>
+            /// Sets the time in seconds that a full linear motion takes. Only the current speed can
+            /// be adjusted with this method (negative values are absolute).
+            /// </summary>
+            /// <param name="time">The time in seconds that a full linear motion takes.</param>
+            public void SetTime(float time)
+            {
+                time = Mathf.Abs(time) * (forwards ? 1f : -1f);
+
                 if (time == 0f)
                     speed = 0f; // handled in update.
                 else
-                    speed = -(1f / time);
+                    speed = (1f / time);
             }
 
             /// <summary>Sets the current position of the linear motion between 0 and 1.</summary>
