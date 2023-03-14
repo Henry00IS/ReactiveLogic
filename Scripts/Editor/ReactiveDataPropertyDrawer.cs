@@ -72,20 +72,34 @@ namespace AlpacaIT.ReactiveLogic.Editor
         {
             // build the auto-complete list for reactive outputs.
             var interfaces = reactive.reactiveMetadata.interfaces;
-            var reactiveOutputs = new List<GUIContent>(interfaces.Length + 4) { new GUIContent("...", "Select the name of an output to insert it.") };
+            var reactiveOutputs = new List<GUIContent>(interfaces.Length + 8) { new GUIContent("...", "Select the name of an output to insert it.") };
+            HashSet<string> outputNames = new HashSet<string>();
             interfaces.GetOutputsAsGUIContents(reactiveOutputs);
 
             // special handler for groups where we find outputs meant for the group.
             if (reactive is LogicGroup group)
             {
                 foreach (var groupOutput in ReactiveLogicManager.Instance.EditorForEachGroupOutput(group))
-                    reactiveOutputs.Add(new GUIContent(groupOutput, "An output invoked by logic inside of the group."));
+                    if (outputNames.Add(groupOutput))
+                        reactiveOutputs.Add(new GUIContent(groupOutput, "An output invoked by logic inside of the group."));
             }
             // special handler when the reactive is part of a group to add group inputs.
             else if (reactive.reactiveData.group)
             {
                 foreach (var groupInput in ReactiveLogicManager.Instance.EditorForEachGroupInput(reactive.reactiveData.group))
-                    reactiveOutputs.Add(new GUIContent("Group" + groupInput, "An input invoked on the group."));
+                {
+                    var name = "Group" + groupInput;
+                    if (outputNames.Add(name))
+                        reactiveOutputs.Add(new GUIContent(name, "An input invoked on the group."));
+                }
+            }
+
+            // check for user inputs on the reactive.
+            foreach (var targetInput in reactive.reactiveData.outputs)
+            {
+                var name = targetInput.name;
+                if (name.StartsWith("User") && outputNames.Add(name))
+                    reactiveOutputs.Add(new GUIContent(name, "Custom user output that is invoked by invoking the " + name + " input."));
             }
 
             cacheReactiveOutputs = reactiveOutputs.ToArray();
@@ -131,7 +145,8 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 if (targetReactive is LogicGroup group)
                 {
                     foreach (var groupInput in ReactiveLogicManager.Instance.EditorForEachGroupInput(group))
-                        options.Add(new GUIContent(groupInput, "An input invoking logic inside of the group."));
+                        if (inputNames.Add(groupInput))
+                            options.Add(new GUIContent(groupInput, "An input invoking logic inside of the group."));
                 }
 
                 // special handler when the reactive is part of a group to add group outputs but
@@ -139,7 +154,19 @@ namespace AlpacaIT.ReactiveLogic.Editor
                 if (target == ReactiveLogicManager.keywordGroup && reactive.reactiveData.group)
                 {
                     foreach (var groupOutput in ReactiveLogicManager.Instance.EditorForEachGroupOutput(reactive.reactiveData.group))
-                        options.Add(new GUIContent("Group" + groupOutput, "An output invoked on the group."));
+                    {
+                        var name = "Group" + groupOutput;
+                        if (inputNames.Add(name))
+                            options.Add(new GUIContent(name, "An output invoked on the group."));
+                    }
+                }
+
+                // check for user inputs on the reactive.
+                foreach (var targetInput in targetReactive.reactiveData.outputs)
+                {
+                    var name = targetInput.name;
+                    if (name.StartsWith("User") && inputNames.Add(name))
+                        options.Add(new GUIContent(name, "Custom user input that will invoke the " + name + " output on the target reactive."));
                 }
             }
 
