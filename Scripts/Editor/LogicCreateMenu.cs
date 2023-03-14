@@ -28,6 +28,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
             go.AddComponent<LogicCase>();
         }
 
+        [MenuItem("GameObject/Reactive/Logic Collision Pair", false)]
+        private static void CreateMenuLogicCollisionPair()
+        {
+            var go = EditorCreateGameObject("Logic Collision Pair");
+            go.AddComponent<LogicCollisionPair>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Compare", false)]
         private static void CreateMenuLogicCompare()
         {
