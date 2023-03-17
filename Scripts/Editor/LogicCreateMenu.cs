@@ -7,6 +7,13 @@ namespace AlpacaIT.ReactiveLogic.Editor
 {
     public static class LogicCreateMenu
     {
+        [MenuItem("GameObject/Reactive/Logic Animator", false)]
+        private static void CreateMenuLogicAnimator()
+        {
+            var go = EditorCreateGameObject("Logic Animator");
+            go.AddComponent<LogicAnimator>();
+        }
+
         [MenuItem("GameObject/Reactive/Logic Auto", false)]
         private static void CreateMenuLogicAuto()
         {
